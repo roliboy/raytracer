@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_thread.h>
 
@@ -109,7 +111,12 @@ int render_thread(void* _fb) {
     SDL_Renderer *ren = SDL_CreateRenderer(
             win,
             -1,
-            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
+
+    //?
+    SDL_Texture* offscreen = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_TARGET, fb->width, fb->height);
+
+    int frameCount = 0;
 
     while (1) {
         SDL_Event event;
@@ -123,16 +130,25 @@ int render_thread(void* _fb) {
             }
         }
 
-        pixel* damaged = framebuffer_get_dirty(fb);
-        for (int i = 0; damaged[i].x != -1; i++) {
-            SDL_SetRenderDrawColor(ren, damaged[i].r, damaged[i].g, damaged[i].b, 255);
-            SDL_RenderDrawPoint(ren, damaged[i].x, damaged[i].y);
+        if (frameCount++ % 60) {
+            SDL_SetRenderTarget(ren, offscreen);
+            SDL_RenderClear(ren);
+
+            pixel* buffer = framebuffer_get(fb);
+            for (int i = 0; buffer[i].x != -1; i++) {
+                SDL_SetRenderDrawColor(ren, buffer[i].r, buffer[i].g, buffer[i].b, 255);
+                SDL_RenderDrawPoint(ren, buffer[i].x, buffer[i].y);
+            }
+
+            //detach
+            SDL_SetRenderTarget(ren, NULL);
+
+            SDL_RenderClear(ren);
+            SDL_RenderCopy(ren, offscreen, NULL, NULL);
+//        	SDL_RenderPresent(renderer);
         }
 
-        if (damaged[0].x != -1)
-            SDL_RenderPresent(ren);
-
-        free(damaged);
+        SDL_RenderPresent(ren);
     }
 
     SDL_DestroyRenderer(ren);
@@ -166,8 +182,9 @@ int main() {
 
     SDL_Thread* renderer = SDL_CreateThread(render_thread, "renderer", (void*)&fb);
 
+    #pragma omp parallel for
     for (int y = image_height - 1; y >= 0; y--) {
-        fprintf(stderr, "%d scanlines left\n", y);
+//        fprintf(stderr, "%d scanlines left\n", y);
         for (int x = 0; x < image_width; x++) {
             vec3 pixel_color = vec3_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
