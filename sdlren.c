@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "framebuffer.h"
 #include "material.h"
 #include "object.h"
 #include "sphere.h"
@@ -93,20 +94,60 @@ vec3 color(ray* r, scene* world, int depth) {
             );
 }
 
-void render_thread() {
-    return;
+const int window_width = 1280;
+const int window_height = 720;
+
+//limit polling rate
+int render_thread(void* _fb) {
+    framebuffer* fb = (framebuffer*)_fb;
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Window *win = SDL_CreateWindow(
+            "Hello World!",
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            window_width, window_height,
+            SDL_WINDOW_SHOWN);
+    SDL_Renderer *ren = SDL_CreateRenderer(
+            win,
+            -1,
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    while (1) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    //SDL_DestroyRenderer(ren);
+                    //SDL_DestroyWindow(win);
+                    //SDL_Quit();
+                    exit(0);
+            }
+        }
+
+        pixel* damaged = framebuffer_get_dirty(fb);
+        for (int i = 0; damaged[i].x != -1; i++) {
+            SDL_SetRenderDrawColor(ren, damaged[i].r, damaged[i].g, damaged[i].b, 255);
+            SDL_RenderDrawPoint(ren, damaged[i].x, damaged[i].y);
+        }
+
+        if (damaged[0].x != -1)
+            SDL_RenderPresent(ren);
+
+        free(damaged);
+    }
+
+    SDL_DestroyRenderer(ren);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+    return 0;
 }
 
 int main() {
     float aspect_ratio = 16.0 / 9.0;
-    int image_width = 1920 / 8;
+    int image_width = 1920 / 4;
     int image_height = (int)(image_width / aspect_ratio);
     int samples_per_pixel = 16;
     int max_depth = 8;
 
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *win = SDL_CreateWindow("Hello World!", 100, 100, image_width, image_height, SDL_WINDOW_SHOWN);
-    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     object randomobjects[512];
     int c = random_scene(randomobjects);
@@ -121,39 +162,12 @@ int main() {
 
     camera cam = camera_create(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
-    vec3 buffer[image_width][image_height];
+    framebuffer fb = framebuffer_create(image_width, image_height);
 
-    SDL_Event event;
-
-    while ( SDL_PollEvent(&event) ) {
-        switch (event.type) {
-            case SDL_MOUSEMOTION:
-                printf("Mouse moved by %d,%d to (%d,%d)\n",
-                        event.motion.xrel, event.motion.yrel,
-                        event.motion.x, event.motion.y);
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                printf("Mouse button %d pressed at (%d,%d)\n",
-                        event.button.button, event.button.x, event.button.y);
-                break;
-            case SDL_QUIT:
-                SDL_DestroyRenderer(ren);
-                SDL_DestroyWindow(win);
-                SDL_Quit();
-                exit(0);
-        }
-        for (int x = 0; x < image_width; x++) {
-            for (int y = 0; y < image_height; y++) {
-                SDL_SetRenderDrawColor(ren, buffer[x][y].x, buffer[x][y].y, buffer[x][y].z, 255);
-                SDL_RenderDrawPoint(ren, x, y);
-            }
-        }
-        SDL_RenderPresent(ren);
-    }
+    SDL_Thread* renderer = SDL_CreateThread(render_thread, "renderer", (void*)&fb);
 
     for (int y = image_height - 1; y >= 0; y--) {
         fprintf(stderr, "%d scanlines left\n", y);
-#pragma omp parallel for
         for (int x = 0; x < image_width; x++) {
             vec3 pixel_color = vec3_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
@@ -162,12 +176,12 @@ int main() {
 
                 ray r = camera_get_ray(&cam, u, v);
                 pixel_color = vec3_add(pixel_color, color(&r, &scn, max_depth));
+
             }
             vec3 rgb = vec3_rgb(pixel_color, samples_per_pixel);
+            framebuffer_set(&fb, x, image_height - 1 - y, rgb);
         }
     }
 
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
-    SDL_Quit();
+    SDL_WaitThread(renderer, NULL);
 }
