@@ -34,7 +34,7 @@ int random_scene(object* objects) {
                 } else if (choose_mat < 0.95) {
                     // metal
                     vec3 albedo = vec3_random_in_range(0.5, 1);
-                    float fuzz = random_float(0, 0.5);
+                    float fuzz = random_float_range(0, 0.5);
                     *sphere_material = metal_create(albedo, fuzz);
                     objects[c++] = sphere_create(center, 0.2, sphere_material);
                 } else {

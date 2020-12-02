@@ -52,7 +52,6 @@ camera camera_create(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float asp
 }
 
 ray camera_get_ray(camera* c, float s, float t) {
-
     vec3 rd = vec3_multiply(vec3_random_in_unit_disk(), c->lens_radius);
     vec3 offset = vec3_add(
             vec3_multiply(c->u, rd.x),

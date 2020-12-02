@@ -17,7 +17,6 @@ typedef struct framebuffer {
     int width;
     int height;
     pixel* buffer;
-    //SDL_mutex* mutex;
 } framebuffer;
 
 framebuffer framebuffer_create(int width, int height) {
@@ -41,7 +40,6 @@ framebuffer framebuffer_create(int width, int height) {
 }
 
 void framebuffer_set(framebuffer* fb, int x, int y, vec3 color) {
-//    SDL_LockMutex(fb->mutex);
     fb->buffer[fb->width * y + x] = (pixel) {
         .r = (int)color.x,
         .g = (int)color.y,
@@ -49,8 +47,6 @@ void framebuffer_set(framebuffer* fb, int x, int y, vec3 color) {
         .x = x,
         .y = y
     };
-//    fb->dirty[fb->width * y + x] = true;
-//    SDL_UnlockMutex(fb->mutex);
 }
 
 pixel* framebuffer_get(framebuffer* fb) {
@@ -58,7 +54,5 @@ pixel* framebuffer_get(framebuffer* fb) {
 }
 
 void framebuffer_destroy(framebuffer* fb) {
-//    SDL_DestroyMutex(fb->mutex);
     free(fb->buffer);
-//    free(fb->dirty);
 }

@@ -18,57 +18,7 @@
 #include "scene.h"
 #include "hit.h"
 
-//TODO: leak
-int random_scene(object* objects) {
-    material* ground_material = (material*)malloc(sizeof(material));
-    *ground_material = lambertian_create(vec3_create(0.5, 0.5, 0.5));
-    objects[0] = sphere_create(vec3_create(0,-1000,0), 1000, ground_material);
-    int c = 1;
-
-    int r = 11;
-    for (int a = -r; a < r; a++) {
-        for (int b = -r; b < r; b++) {
-            float choose_mat = random_float();
-            vec3 center = vec3_create(a + 0.9 * random_float(), 0.2, b + 0.9 * random_float());
-
-            if (vec3_norm(vec3_subtract(center, vec3_create(4, 0.2, 0))) > 0.9) {
-                material* sphere_material = (material*)malloc(sizeof(material));
-
-                if (choose_mat < 0.8) {
-                    // diffuse
-                    vec3 albedo = vec3_multiply_vec3(vec3_random_in_range(0, 1), vec3_random_in_range(0, 1));
-                    *sphere_material = lambertian_create(albedo);
-                    objects[c++] = sphere_create(center, 0.2, sphere_material);
-                } else if (choose_mat < 0.95) {
-                    // metal
-                    vec3 albedo = vec3_random_in_range(0.5, 1);
-                    float fuzz = random_float(0, 0.5);
-                    *sphere_material = metal_create(albedo, fuzz);
-                    objects[c++] = sphere_create(center, 0.2, sphere_material);
-                } else {
-                    // glass
-                    *sphere_material = dielectric_create(1.5);
-                    objects[c++] = sphere_create(center, 0.2, sphere_material);
-                }
-            }
-        }
-    }
-
-
-    material* material1 = (material*)malloc(sizeof(material));
-    *material1 = dielectric_create(1.5);
-    objects[c++] = sphere_create(vec3_create(0, 1, 0), 1.0, material1);
-
-    material* material2 = (material*)malloc(sizeof(material));
-    *material2 = lambertian_create(vec3_create(0.4, 0.2, 0.1));
-    objects[c++] = sphere_create(vec3_create(-4, 1, 0), 1.0, material2);
-
-    material* material3 = (material*)malloc(sizeof(material));
-    *material3 = metal_create(vec3_create(0.7, 0.6, 0.5), 0.0);
-    objects[c++] = sphere_create(vec3_create(4, 1, 0), 1.0, material3);
-    return c;
-}
-
+#include "scenes/book1.h"
 
 vec3 color(ray* r, scene* world, int depth) {
     if (depth <= 0)
@@ -130,9 +80,8 @@ int render_thread(void* _fb) {
             }
         }
 
-        if (frameCount++ % 60) {
             SDL_SetRenderTarget(ren, offscreen);
-            SDL_RenderClear(ren);
+            //SDL_RenderClear(ren);
 
             pixel* buffer = framebuffer_get(fb);
             for (int i = 0; buffer[i].x != -1; i++) {
@@ -143,10 +92,9 @@ int render_thread(void* _fb) {
             //detach
             SDL_SetRenderTarget(ren, NULL);
 
-            SDL_RenderClear(ren);
+            //SDL_RenderClear(ren);
             SDL_RenderCopy(ren, offscreen, NULL, NULL);
-//        	SDL_RenderPresent(renderer);
-        }
+        	//SDL_RenderPresent(ren);
 
         SDL_RenderPresent(ren);
     }
@@ -165,10 +113,7 @@ int main() {
     int max_depth = 8;
 
 
-    object randomobjects[512];
-    int c = random_scene(randomobjects);
-
-    scene scn = scene_create(randomobjects, c);
+    scene scn = scene_book1();
 
     vec3 lookfrom = vec3_create(13, 2, 3);
     vec3 lookat = vec3_create(0, 0, 0);
@@ -184,7 +129,6 @@ int main() {
 
     #pragma omp parallel for
     for (int y = image_height - 1; y >= 0; y--) {
-//        fprintf(stderr, "%d scanlines left\n", y);
         for (int x = 0; x < image_width; x++) {
             vec3 pixel_color = vec3_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
@@ -200,5 +144,7 @@ int main() {
         }
     }
 
+    scene_destroy(&scn);
     SDL_WaitThread(renderer, NULL);
+    framebuffer_destroy(&fb);
 }
