@@ -89,7 +89,7 @@ int main() {
 
     camera cam = camera_create(lookfrom, lookat, vup, 20, 16.0 / 9.0, aperture, dist_to_focus);
 
-    test(1920 / 8, 1, 1, &cam, &scn);
+    test(1920 / 8, 4, 4, &cam, &scn);
 
     scene_destroy(&scn);
 

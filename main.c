@@ -1,5 +1,13 @@
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_video.h>
+#include <SDL2/SDL_thread.h>
+
 #include <stdio.h>
 #include <stdbool.h>
+#include "framebuffer.h"
 #include "material.h"
 #include "object.h"
 #include "sphere.h"
@@ -10,57 +18,7 @@
 #include "scene.h"
 #include "hit.h"
 
-//TODO: leak
-int random_scene(object* objects) {
-    material* ground_material = (material*)malloc(sizeof(material));
-    *ground_material = lambertian_create(vec3_create(0.5, 0.5, 0.5));
-    objects[0] = sphere_create(vec3_create(0,-1000,0), 1000, ground_material);
-    int c = 1;
-
-    int r = 11;
-    for (int a = -r; a < r; a++) {
-        for (int b = -r; b < r; b++) {
-            float choose_mat = random_float();
-            vec3 center = vec3_create(a + 0.9 * random_float(), 0.2, b + 0.9 * random_float());
-
-            if (vec3_norm(vec3_subtract(center, vec3_create(4, 0.2, 0))) > 0.9) {
-                material* sphere_material = (material*)malloc(sizeof(material));
-
-                if (choose_mat < 0.8) {
-                    // diffuse
-                    vec3 albedo = vec3_multiply_vec3(vec3_random_in_range(0, 1), vec3_random_in_range(0, 1));
-                    *sphere_material = lambertian_create(albedo);
-                    objects[c++] = sphere_create(center, 0.2, sphere_material);
-                } else if (choose_mat < 0.95) {
-                    // metal
-                    vec3 albedo = vec3_random_in_range(0.5, 1);
-                    float fuzz = random_float_range(0, 0.5);
-                    *sphere_material = metal_create(albedo, fuzz);
-                    objects[c++] = sphere_create(center, 0.2, sphere_material);
-                } else {
-                    // glass
-                    *sphere_material = dielectric_create(1.5);
-                    objects[c++] = sphere_create(center, 0.2, sphere_material);
-                }
-            }
-        }
-    }
-
-
-    material* material1 = (material*)malloc(sizeof(material));
-    *material1 = dielectric_create(1.5);
-    objects[c++] = sphere_create(vec3_create(0, 1, 0), 1.0, material1);
-
-    material* material2 = (material*)malloc(sizeof(material));
-    *material2 = lambertian_create(vec3_create(0.4, 0.2, 0.1));
-    objects[c++] = sphere_create(vec3_create(-4, 1, 0), 1.0, material2);
-
-    material* material3 = (material*)malloc(sizeof(material));
-    *material3 = metal_create(vec3_create(0.7, 0.6, 0.5), 0.0);
-    objects[c++] = sphere_create(vec3_create(4, 1, 0), 1.0, material3);
-    return c;
-}
-
+#include "scenes/book1.h"
 
 vec3 color(ray* r, scene* world, int depth) {
     if (depth <= 0)
@@ -72,8 +30,8 @@ vec3 color(ray* r, scene* world, int depth) {
         vec3 attenuation;
         if (material_scatter(record.mat, r, &record, &attenuation, &scattered))
             return vec3_multiply_vec3(
-                        attenuation,
-                        color(&scattered, world, depth - 1)
+                    attenuation,
+                    color(&scattered, world, depth - 1)
                     );
         return vec3_create(0, 0, 0);
     }
@@ -88,19 +46,74 @@ vec3 color(ray* r, scene* world, int depth) {
             );
 }
 
+const int window_width = 1280;
+const int window_height = 720;
+
+//limit polling rate
+int render_thread(void* _fb) {
+    framebuffer* fb = (framebuffer*)_fb;
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Window *win = SDL_CreateWindow(
+            "already tracer",
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            window_width, window_height,
+            SDL_WINDOW_SHOWN);
+    SDL_Renderer *ren = SDL_CreateRenderer(
+            win,
+            -1,
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_TARGETTEXTURE);
+
+    //?
+    SDL_Texture* offscreen = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_TARGET, fb->width, fb->height);
+
+    int frameCount = 0;
+
+    while (1) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    //SDL_DestroyRenderer(ren);
+                    //SDL_DestroyWindow(win);
+                    //SDL_Quit();
+                    exit(0);
+            }
+        }
+
+        SDL_SetRenderTarget(ren, offscreen);
+        //SDL_RenderClear(ren);
+
+        pixel* buffer = framebuffer_get(fb);
+        for (int i = 0; buffer[i].x != -1; i++) {
+            SDL_SetRenderDrawColor(ren, buffer[i].r, buffer[i].g, buffer[i].b, 255);
+            SDL_RenderDrawPoint(ren, buffer[i].x, buffer[i].y);
+        }
+
+        //detach
+        SDL_SetRenderTarget(ren, NULL);
+
+        //SDL_RenderClear(ren);
+        SDL_RenderCopy(ren, offscreen, NULL, NULL);
+        //SDL_RenderPresent(ren);
+
+        SDL_RenderPresent(ren);
+    }
+
+    SDL_DestroyRenderer(ren);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+    return 0;
+}
+
 int main() {
     float aspect_ratio = 16.0 / 9.0;
-    int image_width = 1920 / 8;
+    int image_width = 1920 / 4;
     int image_height = (int)(image_width / aspect_ratio);
     int samples_per_pixel = 16;
     int max_depth = 8;
 
-    printf("P3\n%d %d\n255\n", image_width, image_height);
 
-    object randomobjects[512];
-    int c = random_scene(randomobjects);
-
-    scene scn = scene_create(randomobjects, c);
+    scene scn = scene_book1();
 
     vec3 lookfrom = vec3_create(13, 2, 3);
     vec3 lookat = vec3_create(0, 0, 0);
@@ -110,12 +123,13 @@ int main() {
 
     camera cam = camera_create(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
-    for (int y = image_height - 1; y >= 0; y--) {
-        fprintf(stderr, "%d scanlines left\n", y);
-//        #pragma omp parallel for
-        for (int x = 0; x < image_width; x++) {
-            //fprintf(stderr, "%d pixels left\n", image_width - x);
+    framebuffer fb = framebuffer_create(image_width, image_height);
 
+    SDL_Thread* renderer = SDL_CreateThread(render_thread, "renderer", (void*)&fb);
+
+    #pragma omp parallel for
+    for (int y = image_height - 1; y >= 0; y--) {
+        for (int x = 0; x < image_width; x++) {
             vec3 pixel_color = vec3_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
                 float u = ((float)x + random_float() - 0.5) / (image_width - 1);
@@ -123,11 +137,14 @@ int main() {
 
                 ray r = camera_get_ray(&cam, u, v);
                 pixel_color = vec3_add(pixel_color, color(&r, &scn, max_depth));
-            }
 
-            vec3_print_color(pixel_color, samples_per_pixel);
-            printf(" ");
+            }
+            vec3 rgb = vec3_rgb(pixel_color, samples_per_pixel);
+            framebuffer_set(&fb, x, image_height - 1 - y, rgb);
         }
-        printf("\n");
     }
+
+    scene_destroy(&scn);
+    SDL_WaitThread(renderer, NULL);
+    framebuffer_destroy(&fb);
 }
