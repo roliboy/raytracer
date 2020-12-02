@@ -9,11 +9,19 @@ typedef struct vec3 {
 } vec3;
 
 vec3 vec3_create(float x, float y, float z) {
-    return (vec3){x, y, z};
+    return (vec3) {
+        .x = x,
+        .y = y,
+        .z = z
+    };
 }
 
 vec3 vec3_add(vec3 lhs, vec3 rhs) {
-    return (vec3){lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
+    return (vec3) {
+        .x = lhs.x + rhs.x,
+        .y = lhs.y + rhs.y,
+        .z = lhs.z + rhs.z
+    };
 }
 
 vec3 vec3_subtract(vec3 lhs, vec3 rhs) {

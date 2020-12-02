@@ -16,9 +16,13 @@ typedef struct object {
     object_data data;
 } object;
 
-object sphere_create(vec3 center, float radius, material* mat) {
+object sphere_create(vec3 center, float radius, material mat) {
     return (object) {
         .id = object_sphere,
-        .data = (sphere) {center, radius, mat}
+        .data = (sphere) {
+            .center = center,
+            .radius = radius,
+            .mat = mat
+        }
     };
 }

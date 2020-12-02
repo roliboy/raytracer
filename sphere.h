@@ -9,7 +9,7 @@
 typedef struct sphere {
     vec3 center;
     float radius;
-    material* mat;
+    material mat;
 } sphere;
 
 bool sphere_hit(sphere* s, ray* r, float t_min, float t_max, hit* record) {
@@ -37,9 +37,7 @@ bool sphere_hit(sphere* s, ray* r, float t_min, float t_max, hit* record) {
 
     vec3 outward_normal = vec3_divide(vec3_subtract(record->p, s->center), s->radius);
     hit_set_face_normal(record, r, outward_normal);
-    record->mat = s->mat;
-
-//    record->n = vec3_create(0, 1, 0);//(rec.p - center) / radius;
+    record->mat = &s->mat;
 
     return true;
 }

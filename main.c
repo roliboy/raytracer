@@ -107,13 +107,13 @@ int render_thread(void* _fb) {
 
 int main() {
     float aspect_ratio = 16.0 / 9.0;
-    int image_width = 1920 / 4;
+    int image_width = 1920 / 8;
     int image_height = (int)(image_width / aspect_ratio);
     int samples_per_pixel = 16;
     int max_depth = 8;
 
 
-    scene scn = scene_book1();
+    scene scn = scene_load("scenes/book1_cover.scn");
 
     vec3 lookfrom = vec3_create(13, 2, 3);
     vec3 lookat = vec3_create(0, 0, 0);

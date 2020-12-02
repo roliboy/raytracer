@@ -96,10 +96,6 @@ bool dielectric_scatter(dielectric* mat, ray* r_in, hit* record, vec3* attenuati
 
     vec3 unit_direction = vec3_normalize(r_in->direction);
 
-    //vec3 refracted = vec3_refract(unit_direction, record->n, refraction_ratio);
-
-    //*r_out = ray_create(record->p, refracted);
-
     double cos_theta = fmin(vec3_dot(vec3_invert(unit_direction), record->n), 1.0);
     double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 

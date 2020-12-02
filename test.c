@@ -1,16 +1,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include "object.h"
+#include "scene.h"
+#include "scenes/book1.h"
 
 int main() {
-    object* objects = (object*)malloc(10 * sizeof(object));
-    printf("%ld\n", sizeof(objects));
-    int c = 0;
-    for (int i = -11; i < 11; i++) {
-    for (int j = -11; j < 11; j++) {
-        c++;
-    }
-    }
-    printf("%d\n", c);
+    scene scn = scene_book1();
+//    scene scn = scene_load("scenes/book1_cover.scn");
+    scene_destroy(&scn);
+    //printf("%d\n", c);
 }
