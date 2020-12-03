@@ -4,21 +4,15 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_thread.h>
-
 #include <stdio.h>
-#include <stdbool.h>
+
 #include "framebuffer.h"
-#include "material.h"
-#include "object.h"
-#include "sphere.h"
 #include "camera.h"
 #include "util.h"
 #include "vec3.h"
 #include "ray.h"
 #include "scene.h"
 #include "hit.h"
-
-#include "scenes/book1.h"
 
 vec3 color(ray* r, scene* world, int depth) {
     if (depth <= 0)
@@ -54,7 +48,7 @@ int render_thread(void* _fb) {
     framebuffer* fb = (framebuffer*)_fb;
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *win = SDL_CreateWindow(
-            "already tracer",
+            "i regret my life choices v0.1",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             window_width, window_height,
             SDL_WINDOW_SHOWN);
@@ -76,7 +70,8 @@ int render_thread(void* _fb) {
                     //SDL_DestroyRenderer(ren);
                     //SDL_DestroyWindow(win);
                     //SDL_Quit();
-                    exit(0);
+                    //exit(0);
+                    goto cleanup;
             }
         }
 
@@ -99,6 +94,7 @@ int render_thread(void* _fb) {
         SDL_RenderPresent(ren);
     }
 
+    cleanup:
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();
@@ -146,5 +142,11 @@ int main() {
 
     scene_destroy(&scn);
     SDL_WaitThread(renderer, NULL);
+
+    printf("P3\n%d %d\n%d\n", fb.width, fb.height, 255);
+    for (int i = 0; i < fb.height * fb.width; i++) {
+        printf("%d %d %d\n", fb.buffer[i].r, fb.buffer[i].g, fb.buffer[i].b);
+    }
+
     framebuffer_destroy(&fb);
 }

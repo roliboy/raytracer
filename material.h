@@ -85,7 +85,7 @@ bool lambertian_scatter(lambertian* mat, ray* r_in, hit* record, vec3* attenuati
 bool metal_scatter(metal* mat, ray* r_in, hit* record, vec3* attenuation, ray* r_out) {
     vec3 reflected = vec3_reflect(vec3_normalize(r_in->direction), record->n);
     *r_out = ray_create(record->p, vec3_add(reflected,
-                vec3_multiply(vec3_random_in_unit(), mat->fuzz)));
+                vec3_multiply(vec3_random_in_unit_sphere(), mat->fuzz)));
     *attenuation = mat->albedo;
     return vec3_dot(r_out->direction, record->n) > 0;
 }

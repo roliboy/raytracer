@@ -25,7 +25,7 @@ vec3 vec3_add(vec3 lhs, vec3 rhs) {
 }
 
 vec3 vec3_subtract(vec3 lhs, vec3 rhs) {
-    return (vec3){lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
+    return (vec3) {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
 }
 
 float vec3_norm(vec3 vec) {
@@ -101,7 +101,14 @@ vec3 vec3_refract(vec3 uv, vec3 n, float etai_over_etat) {
     return vec3_add(r_out_perp, r_out_parallel);
 }
 
-vec3 vec3_random_in_unit() {
+vec3 vec3_random_unit_vector() {
+    return vec3_normalize(vec3_create(
+                random_float_range(-1, 1),
+                random_float_range(-1, 1),
+                random_float_range(-1, 1)));
+}
+
+vec3 vec3_random_in_unit_sphere() {
     while (true) {
         vec3 random = vec3_create(
                 random_float_range(-1, 1),
@@ -113,16 +120,16 @@ vec3 vec3_random_in_unit() {
     }
 }
 
-vec3 vec3_random_unit_vector() {
-    return vec3_normalize(vec3_create(
-                random_float_range(-1, 1),
-                random_float_range(-1, 1),
-                random_float_range(-1, 1)));
-    //return vec3_normalize(vec3_random_in_unit());
+vec3 vec3_random_in_unit_disk() {
+    while (true) {
+        vec3 p = vec3_create(random_float_range(-1, 1), random_float_range(-1, 1), 0);
+        if (vec3_norm2(p) >= 1) continue;
+        return p;
+    }
 }
 
 vec3 vec3_random_in_hemisphere(vec3 normal) {
-    vec3 in_unit_sphere = vec3_random_in_unit();
+    vec3 in_unit_sphere = vec3_random_in_unit_sphere();
 //    vec3 in_unit_sphere = vec3_random_unit_vector();
     if (vec3_dot(in_unit_sphere, normal) > 0.0)
         return in_unit_sphere;
@@ -138,14 +145,6 @@ vec3 vec3_random_in_range(float min, float max) {
     };
 }
 
-vec3 vec3_random_in_unit_disk() {
-    while (true) {
-        vec3 p = vec3_create(random_float_range(-1, 1), random_float_range(-1, 1), 0);
-        if (vec3_norm2(p) >= 1) continue;
-        return p;
-    }
-}
-
 bool vec3_near_zero(vec3 vec) {
     const float s = 1e-8;
     return (fabs(vec.x) < s) && (fabs(vec.y) < s) && (fabs(vec.z) < s);
@@ -153,10 +152,6 @@ bool vec3_near_zero(vec3 vec) {
 
 vec3 vec3_reflect(vec3 v, vec3 n) {
     return vec3_subtract(v, vec3_multiply(n, 2 * vec3_dot(v, n)));
-}
-
-void vec3_print(vec3 vec) {
-    printf("%f %f %f\n", vec.x, vec.y, vec.z);
 }
 
 vec3 vec3_rgb(vec3 vec, int samples) {
@@ -171,17 +166,4 @@ vec3 vec3_rgb(vec3 vec, int samples) {
             .z = (float)(int)(256 * clamp(b, 0, 0.999))
 
     };
-}
-
-void vec3_print_color(vec3 vec, int samples) {
-    float scale = 1.0 / samples;
-    float r = sqrt(scale * vec.x);
-    float g = sqrt(scale * vec.y);
-    float b = sqrt(scale * vec.z);
-
-    printf("%d %d %d",
-            (int)(256 * clamp(r, 0, 0.999)),
-            (int)(256 * clamp(g, 0, 0.999)),
-            (int)(256 * clamp(b, 0, 0.999))
-          );
 }
