@@ -5,7 +5,7 @@
 #include "material.h"
 #include "object.h"
 #include "sphere.h"
-#include "vec3.h"
+#include "vector.h"
 
 typedef struct scene {
     object* objects;
@@ -41,8 +41,8 @@ scene scene_load(char* filename) {
                 float r, g, b;
                 fscanf(fp, "%f %f %f", &r, &g, &b);
                 //printf("%s %f %f %f %s %f %f %f\n", type, x, y, z, mat, r, g, b);
-                material mat = lambertian_create(vec3_create(r, g, b));
-                objects[c] = sphere_create(vec3_create(x, y, z), rad, mat);
+                material mat = lambertian_create(vector_create(r, g, b));
+                objects[c] = sphere_create(vector_create(x, y, z), rad, mat);
                 c++;
             }
             else if (!strcmp(mat, "dielectric")) {
@@ -50,15 +50,15 @@ scene scene_load(char* filename) {
                 fscanf(fp, "%f", &ir);
                 //printf("%s %f %f %f %s %f\n", type, x, y, z, mat, i);
                 material mat = dielectric_create(ir);
-                objects[c] = sphere_create(vec3_create(x, y, z), rad, mat);
+                objects[c] = sphere_create(vector_create(x, y, z), rad, mat);
                 c++;
             }
             else if (!strcmp(mat, "metal")) {
                 float r, g, b, f;
                 fscanf(fp, "%f %f %f %f", &r, &g, &b, &f);
                 //printf("%s %f %f %f %s %f %f %f %f\n", type, x, y, z, mat, r, g, b, f);
-                material mat = metal_create(vec3_create(r, g, b), f);
-                objects[c] = sphere_create(vec3_create(x, y, z), rad, mat);
+                material mat = metal_create(vector_create(r, g, b), f);
+                objects[c] = sphere_create(vector_create(x, y, z), rad, mat);
                 c++;
             }
         }

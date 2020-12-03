@@ -1,40 +1,40 @@
 #pragma once
 
 #include "ray.h"
-#include "vec3.h"
+#include "vector.h"
 
 typedef struct camera {
-    vec3 origin;
-    vec3 horizontal;
-    vec3 vertical;
-    vec3 lower_left_corner;
-    vec3 u;
-    vec3 v;
-    vec3 w;
+    vector origin;
+    vector horizontal;
+    vector vertical;
+    vector lower_left_corner;
+    vector u;
+    vector v;
+    vector w;
     float lens_radius;
 } camera;
 
-camera camera_create(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect_ratio, float aperture, float focus_dist) {
+camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist) {
     float theta = vfov * M_PI / 180.0;
     float h = tan(theta/2);
     float viewport_height = 2.0 * h;
     float viewport_width = aspect_ratio * viewport_height;
 
-    vec3 w = vec3_normalize(vec3_subtract(lookfrom, lookat));
-    vec3 u = vec3_normalize(vec3_cross(vup, w));
-    vec3 v = vec3_cross(w, u);
+    vector w = vector_normalize(vector_subtract(lookfrom, lookat));
+    vector u = vector_normalize(vector_cross(vup, w));
+    vector v = vector_cross(w, u);
 
 
-    vec3 origin = lookfrom;
-    vec3 horizontal = vec3_multiply(u, focus_dist * viewport_width);
-    vec3 vertical = vec3_multiply(v, focus_dist * viewport_height);
-    vec3 lower_left_corner = vec3_subtract(
+    vector origin = lookfrom;
+    vector horizontal = vector_multiply_scalar(u, focus_dist * viewport_width);
+    vector vertical = vector_multiply_scalar(v, focus_dist * viewport_height);
+    vector lower_left_corner = vector_subtract(
                 origin,
-                vec3_add(
-                    vec3_multiply(w, focus_dist),
-                    vec3_add(
-                        vec3_divide(horizontal, 2),
-                        vec3_divide(vertical, 2)
+                vector_add(
+                    vector_multiply_scalar(w, focus_dist),
+                    vector_add(
+                        vector_divide_scalar(horizontal, 2),
+                        vector_divide_scalar(vertical, 2)
                         )
                     )
                 );
@@ -52,21 +52,21 @@ camera camera_create(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float asp
 }
 
 ray camera_get_ray(camera* c, float s, float t) {
-    vec3 rd = vec3_multiply(vec3_random_in_unit_disk(), c->lens_radius);
-    vec3 offset = vec3_add(
-            vec3_multiply(c->u, rd.x),
-            vec3_multiply(c->v, rd.y)
+    vector rd = vector_multiply_scalar(vector_random_in_unit_disk(), c->lens_radius);
+    vector offset = vector_add(
+            vector_multiply_scalar(c->u, rd.x),
+            vector_multiply_scalar(c->v, rd.y)
             );
 
     return ray_create(
-        vec3_add(c->origin, offset),
-        vec3_add(
+        vector_add(c->origin, offset),
+        vector_add(
             c->lower_left_corner,
-            vec3_add(
-                vec3_multiply(c->horizontal, s),
-                vec3_subtract(
-                    vec3_multiply(c->vertical, t),
-                    vec3_add(c->origin, offset)
+            vector_add(
+                vector_multiply_scalar(c->horizontal, s),
+                vector_subtract(
+                    vector_multiply_scalar(c->vertical, t),
+                    vector_add(c->origin, offset)
                     )
                 )
             )

@@ -1,6 +1,5 @@
 rename constructos/destructors
-rename vec3
-clean up vec3 class
+rename vector
+clean up vector class
 create materials with a single function / create_material(mat_lambertian) instead of lambertian_create
 rename lambertian to diffuse
-move material data inside objects

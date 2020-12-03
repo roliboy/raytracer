@@ -3,7 +3,7 @@
 #include <SDL2/SDL_mutex.h>
 #include <stdbool.h>
 #include <string.h>
-#include "vec3.h"
+#include "vector.h"
 
 typedef struct pixel {
     int r;
@@ -39,7 +39,7 @@ framebuffer framebuffer_create(int width, int height) {
     };
 }
 
-void framebuffer_set(framebuffer* fb, int x, int y, vec3 color) {
+void framebuffer_set(framebuffer* fb, int x, int y, vector color) {
     fb->buffer[fb->width * y + x] = (pixel) {
         .r = (int)color.x,
         .g = (int)color.y,

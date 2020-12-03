@@ -5,7 +5,7 @@
 #include "sphere.h"
 #include "camera.h"
 #include "util.h"
-#include "vec3.h"
+#include "vector.h"
 #include "ray.h"
 #include "scenes/book1.h"
 #include "hit.h"
@@ -20,29 +20,29 @@ long int timestamp() {
     return round(spec.tv_sec * 1000 + spec.tv_nsec / 1.0e6);
 }
 
-vec3 color(ray* r, scene* world, int depth) {
+vector color(ray* r, scene* world, int depth) {
     if (depth <= 0)
-        return vec3_create(0, 0, 0);
+        return vector_create(0, 0, 0);
 
     hit record;
     if (scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record)) {
         ray scattered;
-        vec3 attenuation;
+        vector attenuation;
         if (material_scatter(record.mat, r, &record, &attenuation, &scattered))
-            return vec3_multiply_vec3(
+            return vector_multiply(
                         attenuation,
                         color(&scattered, world, depth - 1)
                     );
-        return vec3_create(0, 0, 0);
+        return vector_create(0, 0, 0);
     }
 
-    vec3 unit_direction = vec3_normalize(r->direction);
+    vector unit_direction = vector_normalize(r->direction);
     float t = 0.5 * (unit_direction.y + 1.0);
-    return vec3_add(
-            vec3_multiply(
-                vec3_create(1.0, 1.0, 1.0), 1.0 - t),
-            vec3_multiply(
-                vec3_create(0.5, 0.7, 1.0), t)
+    return vector_add(
+            vector_multiply_scalar(
+                vector_create(1.0, 1.0, 1.0), 1.0 - t),
+            vector_multiply_scalar(
+                vector_create(0.5, 0.7, 1.0), t)
             );
 }
 
@@ -53,13 +53,13 @@ void run(int image_width, int samples_per_pixel, int max_depth, camera* cam, sce
     #pragma omp parallel for
     for (int y = image_height - 1; y >= 0; y--) {
         for (int x = 0; x < image_width; x++) {
-            vec3 pixel_color = vec3_create(0, 0, 0);
+            vector pixel_color = vector_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
                 float u = ((float)x + random_float() - 0.5) / (image_width - 1);
                 float v = ((float)y + random_float() - 0.5) / (image_height - 1);
 
                 ray r = camera_get_ray(cam, u, v);
-                pixel_color = vec3_add(pixel_color, color(&r, scn, max_depth));
+                pixel_color = vector_add(pixel_color, color(&r, scn, max_depth));
             }
         }
     }
@@ -81,9 +81,9 @@ void test(int image_width, int samples_per_pixel, int max_depth, camera* cam, sc
 int main() {
     scene scn = scene_book1();
 
-    vec3 lookfrom = vec3_create(13, 2, 3);
-    vec3 lookat = vec3_create(0, 0, 0);
-    vec3 vup = vec3_create(0, 1, 0);
+    vector lookfrom = vector_create(13, 2, 3);
+    vector lookat = vector_create(0, 0, 0);
+    vector vup = vector_create(0, 1, 0);
     float dist_to_focus = 10;
     float aperture = 0.1;
 

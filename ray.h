@@ -1,24 +1,24 @@
 #pragma once
 
-#include "vec3.h"
+#include "vector.h"
 
 typedef struct ray {
-    vec3 origin;
-    vec3 direction;
+    vector origin;
+    vector direction;
 } ray;
 
-ray ray_create(vec3 origin, vec3 direction) {
+ray ray_create(vector origin, vector direction) {
     return (ray) {origin, direction};
 }
 
-vec3 ray_origin(ray r) {
+vector ray_origin(ray r) {
     return r.origin;
 }
 
-vec3 ray_direction(ray r) {
+vector ray_direction(ray r) {
     return r.direction;
 }
 
-vec3 ray_at(ray* r, float t) {
-    return vec3_add(r->origin, vec3_multiply(r->direction, t));
+vector ray_at(ray* r, float t) {
+    return vector_add(r->origin, vector_multiply_scalar(r->direction, t));
 }
