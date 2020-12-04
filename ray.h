@@ -5,10 +5,15 @@
 typedef struct ray {
     vector origin;
     vector direction;
+    float time;
 } ray;
 
-ray ray_create(vector origin, vector direction) {
-    return (ray) {origin, direction};
+ray ray_create(vector origin, vector direction, float time) {
+    return (ray) {
+        .origin = origin,
+        .direction = direction,
+        .time = time
+    };
 }
 
 vector ray_origin(ray r) {

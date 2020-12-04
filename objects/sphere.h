@@ -1,10 +1,8 @@
 #pragma once
 
-#include "material.h"
-#include "vector.h"
-#include "ray.h"
-#include "hit.h"
-#include <stdio.h>
+#include "../ray.h"
+#include "../vector.h"
+#include "../material.h"
 
 typedef struct sphere {
     vector center;
@@ -33,6 +31,9 @@ bool sphere_hit(sphere* s, ray* r, float t_min, float t_max, hit* record) {
 
     record->t = root;
     record->p = ray_at(r, record->t);
+
+
+    //TODO: remove?
     record->n = vector_divide_scalar(vector_subtract(record->p, s->center), s->radius);
 
     vector outward_normal = vector_divide_scalar(vector_subtract(record->p, s->center), s->radius);
@@ -41,4 +42,3 @@ bool sphere_hit(sphere* s, ray* r, float t_min, float t_max, hit* record) {
 
     return true;
 }
-

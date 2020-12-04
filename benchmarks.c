@@ -2,12 +2,11 @@
 #include <stdbool.h>
 #include "material.h"
 #include "object.h"
-#include "sphere.h"
 #include "camera.h"
 #include "util.h"
 #include "vector.h"
 #include "ray.h"
-#include "scenes/book1.h"
+#include "scene.h"
 #include "hit.h"
 
 #include <inttypes.h>
@@ -55,8 +54,8 @@ void run(int image_width, int samples_per_pixel, int max_depth, camera* cam, sce
         for (int x = 0; x < image_width; x++) {
             vector pixel_color = vector_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
-                float u = ((float)x + random_float() - 0.5) / (image_width - 1);
-                float v = ((float)y + random_float() - 0.5) / (image_height - 1);
+                float u = ((float)x + random_float(0, 1) - 0.5) / (image_width - 1);
+                float v = ((float)y + random_float(0, 1) - 0.5) / (image_height - 1);
 
                 ray r = camera_get_ray(cam, u, v);
                 pixel_color = vector_add(pixel_color, color(&r, scn, max_depth));

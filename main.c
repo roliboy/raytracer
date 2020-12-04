@@ -117,7 +117,7 @@ int main() {
     float dist_to_focus = 10;
     float aperture = 0.1;
 
-    camera cam = camera_create(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+    camera cam = camera_create(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
     framebuffer fb = framebuffer_create(image_width, image_height);
 
@@ -128,8 +128,8 @@ int main() {
         for (int x = 0; x < image_width; x++) {
             vector pixel_color = vector_create(0, 0, 0);
             for (int s = 0; s < samples_per_pixel; ++s) {
-                float u = ((float)x + random_float() - 0.5) / (image_width - 1);
-                float v = ((float)y + random_float() - 0.5) / (image_height - 1);
+                float u = ((float)x + random_float(0, 1) - 0.5) / (image_width - 1);
+                float v = ((float)y + random_float(0, 1) - 0.5) / (image_height - 1);
 
                 ray r = camera_get_ray(&cam, u, v);
                 pixel_color = vector_add(pixel_color, color(&r, &scn, max_depth));

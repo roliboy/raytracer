@@ -1,7 +1,9 @@
 #pragma once
 
-#include <math.h>
 #include "util.h"
+
+#include <stdbool.h>
+#include <math.h>
 
 typedef struct vector {
     float x;
@@ -131,7 +133,6 @@ vector vector_reflect(vector v, vector n) {
         .y = v.y - 2 * dot * n.y,
         .z = v.z - 2 * dot * n.z
     };
-    //return vector_subtract(v, vector_multiply_scalar(n, 2 * vector_dot(v, n)));
 }
 
 vector vector_refract(vector v, vector n, float eta) {
@@ -149,17 +150,17 @@ vector vector_refract(vector v, vector n, float eta) {
 
 vector vector_random_on_unit_sphere() {
     return vector_normalize(vector_create(
-                random_float_range(-1, 1),
-                random_float_range(-1, 1),
-                random_float_range(-1, 1)));
+                random_float(-1, 1),
+                random_float(-1, 1),
+                random_float(-1, 1)));
 }
 
 vector vector_random_in_unit_sphere() {
     while (true) {
         vector random = vector_create(
-                random_float_range(-1, 1),
-                random_float_range(-1, 1),
-                random_float_range(-1, 1));
+                random_float(-1, 1),
+                random_float(-1, 1),
+                random_float(-1, 1));
         if (vector_norm_squared(random) >= 1) continue;
         return random;
     }
@@ -167,16 +168,16 @@ vector vector_random_in_unit_sphere() {
 
 vector vector_random_on_unit_disk() {
     return vector_normalize(vector_create(
-                random_float_range(-1, 1),
-                random_float_range(-1, 1),
+                random_float(-1, 1),
+                random_float(-1, 1),
                 0));
 }
 
 vector vector_random_in_unit_disk() {
     while (true) {
         vector p = vector_create(
-                random_float_range(-1, 1),
-                random_float_range(-1, 1),
+                random_float(-1, 1),
+                random_float(-1, 1),
                 0);
         if (vector_norm_squared(p) >= 1) continue;
         return p;
@@ -194,9 +195,9 @@ vector vector_random_in_hemisphere(vector normal) {
 
 vector vector_random_in_range(float min, float max) {
     return (vector) {
-        .x = random_float_range(min, max),
-        .y = random_float_range(min, max),
-        .z = random_float_range(min, max)
+        .x = random_float(min, max),
+        .y = random_float(min, max),
+        .z = random_float(min, max)
     };
 }
 

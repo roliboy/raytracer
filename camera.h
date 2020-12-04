@@ -1,5 +1,6 @@
 #pragma once
 
+#include "util.h"
 #include "ray.h"
 #include "vector.h"
 
@@ -12,9 +13,11 @@ typedef struct camera {
     vector v;
     vector w;
     float lens_radius;
+    float shutter_open;
+    float shutter_close;
 } camera;
 
-camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist) {
+camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist, float shutter_open, float shutter_cose) {
     float theta = vfov * M_PI / 180.0;
     float h = tan(theta/2);
     float viewport_height = 2.0 * h;
@@ -47,7 +50,9 @@ camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, flo
         .u = u,
         .v = v,
         .w = w,
-        .lens_radius = aperture / 2
+        .lens_radius = aperture / 2,
+        .shutter_open = shutter_open,
+        .shutter_close = shutter_cose
     };
 }
 
@@ -69,6 +74,6 @@ ray camera_get_ray(camera* c, float s, float t) {
                     vector_add(c->origin, offset)
                     )
                 )
-            )
-        );
+            ),
+        random_float(c->shutter_open, c->shutter_close));
 }

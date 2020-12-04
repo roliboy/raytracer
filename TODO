@@ -1,5 +1,2 @@
 rename constructos/destructors
-rename vector
-clean up vector class
-create materials with a single function / create_material(mat_lambertian) instead of lambertian_create
-rename lambertian to diffuse
+generic object hit/bounding_box with void* parameter
