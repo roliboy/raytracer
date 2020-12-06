@@ -9,8 +9,8 @@
 int main() {
     printf("sphere %f %f %f %f diffuse %f %f %f\n", 0.0, -1000.0, 0.0, 1000.0, 0.5, 0.5, 0.5);
 
-    for (int a = -11; a < 11; a++) {
-        for (int b = -11; b < 11; b++) {
+    for (int a = -20; a < 20; a++) {
+        for (int b = -20; b < 20; b++) {
             float choose_mat = random_float(0, 1);
             vector center = vector_create(a + 0.5 * random_float(0, 1), 0.2, b + 0.5 * random_float(0, 1));
 

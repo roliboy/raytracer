@@ -8,6 +8,7 @@
 
 #include "framebuffer.h"
 #include "camera.h"
+#include "object.h"
 #include "util.h"
 #include "vector.h"
 #include "ray.h"
@@ -48,7 +49,7 @@ int render_thread(void* _fb) {
     framebuffer* fb = (framebuffer*)_fb;
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *win = SDL_CreateWindow(
-            "i regret my life choices v0.1",
+            "i regret my life choices v0.2 new and improved",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             window_width, window_height,
             SDL_WINDOW_SHOWN);
@@ -105,11 +106,18 @@ int main() {
     float aspect_ratio = 16.0 / 9.0;
     int image_width = 1920 / 8;
     int image_height = (int)(image_width / aspect_ratio);
-    int samples_per_pixel = 16;
+    int samples_per_pixel = 32;
     int max_depth = 8;
 
 
-    scene scn = scene_load("scenes/book1_cover.scn");
+    scene scn = scene_load("scenes/book1_cover_overkill.scn");
+
+    object nd = node_create(&scn, 0, scn.size, 0, 1);
+
+    scene nscn = (scene) {
+        .objects = &nd,
+        .size = 1
+    };
 
     vector lookfrom = vector_create(13, 2, 3);
     vector lookat = vector_create(0, 0, 0);

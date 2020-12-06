@@ -1,2 +1,3 @@
 rename constructos/destructors
 generic object hit/bounding_box with void* parameter
+rewrite scene loader to return node hierarchy
