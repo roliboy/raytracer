@@ -62,4 +62,5 @@ build/vector.o: vector.c vector.h
 
 .PHONY: clean
 clean:
-	@rm tracer
+	rm $(OBJECTS)
+	rm tracer

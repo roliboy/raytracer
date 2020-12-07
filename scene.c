@@ -19,7 +19,9 @@ scene scene_load(char* filename) {
         if (!strcmp(tag, "moving_sphere")) object_count++;
     }
 
+    printf("oc: %d\n", object_count);
     object* objects = (object*)malloc(sizeof(object) * object_count);
+    object* nodes = (object*)malloc(sizeof(object) * object_count * 1.5); //shrug
     int c = 0;
 
     rewind(fp);
@@ -92,9 +94,18 @@ scene scene_load(char* filename) {
     }
 
     fclose(fp);
+
+    object* root = node_create(objects, nodes, 0, object_count, 0, 1);
+
+    //scene nscn = (scene) {
+    //    .objects = &nd,
+    //    .size = 1
+    //};
+
     return (scene) {
         .objects = objects,
-        .size = object_count
+        .nodes = nodes,
+        .root = *root
     };
 }
 
@@ -102,33 +113,40 @@ bool scene_hit(scene* s, ray* r, float t_min, float t_max, hit* record) {
     hit temp_record;
     bool hit_anything = false;
     float closest = t_max;
-    for (int i = 0; i < s->size; i++) {
-        if(object_hit(&s->objects[i], r, t_min, closest, &temp_record)) {
-            hit_anything = true;
-            closest = temp_record.t;
-            *record = temp_record;
-        }
+    if (object_hit(&s->root, r, t_min, closest, &temp_record)) {
+        hit_anything = true;
+        closest = temp_record.t;
+        *record = temp_record;
     }
+//    for (int i = 0; i < s->size; i++) {
+//        if(object_hit(&s->objects[i], r, t_min, closest, &temp_record)) {
+//            hit_anything = true;
+//            closest = temp_record.t;
+//            *record = temp_record;
+//        }
+//    }
     return hit_anything;
 }
 
 bool scene_bounding_box(scene* scn, float time0, float time1, bounding_box* box) {
-    if (scn->size == 0) return false;
+    //TODO: maybe
+    //if (scn->root == 0) return false;
 
     bounding_box temp_box;
     bool first_box = true;
 
-    for (int i = 0; i < scn->size; i++) {
-        if (!object_bounding_box(&scn->objects[i], time0, time1, &temp_box)) return false;
-        *box = first_box? temp_box : bounding_box_surround(*box, temp_box);
-        //TODO: remove branch
-        first_box = false;
-    }
-
+    if (!object_bounding_box(&scn->root, time0, time1, &temp_box)) return false;
+    *box = temp_box;
+//    for (int i = 0; i < scn->size; i++) {
+//        if (!object_bounding_box(&scn->objects[i], time0, time1, &temp_box)) return false;
+//        *box = first_box? temp_box : bounding_box_surround(*box, temp_box);
+//        //TODO: remove branch
+//        first_box = false;
+//    }
     return true;
-
 }
 
 void scene_destroy(scene* scn) {
     free(scn->objects);
+    free(scn->nodes);
 }

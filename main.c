@@ -110,13 +110,6 @@ int main() {
 
     scene scn = scene_load("scenes/book1_cover_overkill.scn");
 
-    object nd = node_create(&scn, 0, scn.size, 0, 1);
-
-    scene nscn = (scene) {
-        .objects = &nd,
-        .size = 1
-    };
-
     vector lookfrom = vector_create(13, 2, 3);
     vector lookat = vector_create(0, 0, 0);
     vector vup = vector_create(0, 1, 0);
@@ -138,7 +131,7 @@ int main() {
                 float v = ((float)y + random_float(0, 1) - 0.5) / (image_height - 1);
 
                 ray r = camera_get_ray(&cam, u, v);
-                pixel_color = vector_add(pixel_color, color(&r, &nscn, max_depth));
+                pixel_color = vector_add(pixel_color, color(&r, &scn, max_depth));
 
             }
             vector rgb = vector_rgb(pixel_color, samples_per_pixel);

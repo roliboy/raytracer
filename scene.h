@@ -4,14 +4,15 @@
 #include "hit.h"
 #include "material.h"
 #include "vector.h"
+#include "object.h"
 
 #include <string.h>
 #include <stdio.h>
 
-typedef struct object object;
 typedef struct scene {
     object* objects;
-    int size;
+    object* nodes;
+    object root;
 } scene;
 
 scene scene_load(char* filename);

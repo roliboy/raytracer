@@ -52,7 +52,7 @@ bool object_bounding_box(object* obj, float time0, float time1, bounding_box* bo
     return false;
 }
 
-object node_create(scene* scn, int start, int end, float time0, float time1) {
+object* node_create(object* objects, object* tree, int start, int end, float time0, float time1) {
     int axis = random_int(0, 2);
     int (*comparator)(const void*, const void*);
     //int (*comparator2)(const void*, const void*);
@@ -68,27 +68,27 @@ object node_create(scene* scn, int start, int end, float time0, float time1) {
     object* right;
 
     if (object_span == 1) {
-        left = &scn->objects[start];
-        right = &scn->objects[start];
+        left = &objects[start];
+        right = &objects[start];
     }
     else if (object_span == 2) {
-        if (comparator(&scn->objects[start], &scn->objects[start + 1])) {
-            left = &scn->objects[start];
-            right = &scn->objects[start + 1];
+        if (comparator(&objects[start], &objects[start + 1])) {
+            left = &objects[start];
+            right = &objects[start + 1];
         } else {
-            left = &scn->objects[start + 1];
-            right = &scn->objects[start];
+            left = &objects[start + 1];
+            right = &objects[start];
         }
     }
     else {
 //        pritf("sorting from %p \n")
-        qsort(&scn->objects[start], object_span, sizeof(object), comparator);
+        qsort(&objects[start], object_span, sizeof(object), comparator);
 
         int mid = start + object_span / 2;
-        left = (object*)malloc(sizeof(object));
-        right = (object*)malloc(sizeof(object));
-        *left = node_create(scn, start, mid, time0, time1);
-        *right = node_create(scn, mid, end, time0, time1);
+        //left = (object*)malloc(sizeof(object));
+        //right = (object*)malloc(sizeof(object));
+        left = node_create(objects, tree, start, mid, time0, time1);
+        right = node_create(objects, tree, mid, end, time0, time1);
     }
 
     bounding_box box_left, box_right;
@@ -100,7 +100,11 @@ object node_create(scene* scn, int start, int end, float time0, float time1) {
 
     bounding_box box = bounding_box_surround(box_left, box_right);
 
-    return (object) {
+    static int index = 0;
+    printf("%d\n", index);
+    object* root = &tree[index++];
+
+    *root = (object) {
         .id = object_node,
         .data = (object_data) {
             .node = (node) {
@@ -110,6 +114,8 @@ object node_create(scene* scn, int start, int end, float time0, float time1) {
             }
         }
     };
+
+    return root;
 }
 
 bool object_hit(object* obj, ray* r, float t_min, float t_max, hit* record) {
