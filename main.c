@@ -61,8 +61,6 @@ int render_thread(void* _fb) {
     //?
     SDL_Texture* offscreen = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_TARGET, fb->width, fb->height);
 
-    int frameCount = 0;
-
     while (1) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -140,7 +138,7 @@ int main() {
                 float v = ((float)y + random_float(0, 1) - 0.5) / (image_height - 1);
 
                 ray r = camera_get_ray(&cam, u, v);
-                pixel_color = vector_add(pixel_color, color(&r, &scn, max_depth));
+                pixel_color = vector_add(pixel_color, color(&r, &nscn, max_depth));
 
             }
             vector rgb = vector_rgb(pixel_color, samples_per_pixel);
