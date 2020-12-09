@@ -59,4 +59,6 @@ bool moving_sphere_bounding_box(moving_sphere *s, float time0, float time1, boun
     *box = bounding_box_surround(
             bounding_box_create(vector_subtract(center0, radius), vector_add(center0, radius)),
             bounding_box_create(vector_subtract(center1, radius), vector_add(center1, radius)));
+
+    return true;
 }

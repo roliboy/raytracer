@@ -19,7 +19,7 @@ scene scene_load(char* filename) {
         if (!strcmp(tag, "moving_sphere")) object_count++;
     }
 
-    printf("oc: %d\n", object_count);
+    //printf("oc: %d\n", object_count);
     object* objects = (object*)malloc(sizeof(object) * object_count);
     object* nodes = (object*)malloc(sizeof(object) * object_count * 1.5); //shrug
     int c = 0;
@@ -133,7 +133,6 @@ bool scene_bounding_box(scene* scn, float time0, float time1, bounding_box* box)
     //if (scn->root == 0) return false;
 
     bounding_box temp_box;
-    bool first_box = true;
 
     if (!object_bounding_box(&scn->root, time0, time1, &temp_box)) return false;
     *box = temp_box;

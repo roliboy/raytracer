@@ -60,7 +60,7 @@ object* node_create(object* objects, object* tree, int start, int end, float tim
         comparator = &bounding_box_x_compare;
     else if (axis == 1)
         comparator = &bounding_box_y_compare;
-    else if (axis == 2)
+    else
         comparator = &bounding_box_z_compare;
     int object_span = end - start;
 
@@ -101,7 +101,7 @@ object* node_create(object* objects, object* tree, int start, int end, float tim
     bounding_box box = bounding_box_surround(box_left, box_right);
 
     static int index = 0;
-    printf("%d\n", index);
+    //printf("%d\n", index);
     object* root = &tree[index++];
 
     *root = (object) {

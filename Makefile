@@ -1,13 +1,20 @@
 CC = gcc
-CFLAGS  = -g -Wall -O2 -fopenmp
+#CFLAGS  = -g -Wall -Wpedantic -O3 -march=native -fopenmp -pg
+CFLAGS  = -Wall -Wpedantic -O2 -march=native -fopenmp -mavx2
 LDFLAGS = -lm -lSDL2
 
-OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/main.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o
+OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o
 
 all: tracer
 
-tracer: $(OBJECTS)
+tracer: $(OBJECTS) build/main.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+benchmarks: $(OBJECTS) build/benchmarks.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+build/benchmarks.o: benchmarks.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 build/bounding_box.o: bounding_box.c bounding_box.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c

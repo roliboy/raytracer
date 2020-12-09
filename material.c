@@ -42,5 +42,7 @@ bool material_scatter(material* mat, ray* r_in, hit* record, vector* attenuation
             return metal_scatter(&mat->data.metal, r_in, record, attenuation, r_out);
         case material_dielectric:
             return dielectric_scatter(&mat->data.dielectric, r_in, record, attenuation, r_out);
+        default:
+            return false;
     }
 }
