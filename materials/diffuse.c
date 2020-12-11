@@ -11,6 +11,6 @@ bool diffuse_scatter(diffuse* mat, ray* r_in, hit* record, vector* attenuation, 
     }
 
     *r_out = ray_create(record->p, scatter_direction, r_in->time);
-    *attenuation = mat->albedo;
+    *attenuation = texture_value(mat->albedo, record->u, record->v, record->p);
     return true;
 }

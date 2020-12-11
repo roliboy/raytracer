@@ -6,6 +6,8 @@ typedef struct material material;
 typedef struct ray ray;
 typedef struct hit {
     float t;
+    float u;
+    float v;
     vector p;
     vector n;
     bool front_face;

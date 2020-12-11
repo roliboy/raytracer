@@ -30,7 +30,8 @@ bool sphere_hit(sphere* s, ray* r, float t_min, float t_max, hit* record) {
 
     vector outward_normal = vector_divide_scalar(vector_subtract(record->p, s->center), s->radius);
     hit_set_face_normal(record, r, outward_normal);
-    record->mat = &s->mat;
+    sphere_uv(s, outward_normal, &record->u, &record->v);
+    record->mat = s->mat;
 
     return true;
 }
@@ -40,4 +41,12 @@ bool sphere_bounding_box(sphere* s, float time0, float time1, bounding_box* box)
     box->minimum = vector_subtract(s->center, vector_create(s->radius, s->radius, s->radius));
     box->maximum = vector_add(s->center, vector_create(s->radius, s->radius, s->radius));
     return true;
+}
+
+void sphere_uv(sphere* s, vector p, float* u, float* v) {
+    float theta = acos(-p.y);
+    float phi = atan2(-p.z, p.x) + M_PI;
+
+    *u = phi / (2*M_PI);
+    *v = theta / M_PI;
 }

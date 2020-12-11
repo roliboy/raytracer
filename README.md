@@ -8,3 +8,4 @@ ray tracer i ~~stole~~ implemented following [this pdf](https://www.realtimerend
 - realtime output to window using SDL
 - multithreaded rendering
 - scene loading from files
+- AVX256 intrinsics

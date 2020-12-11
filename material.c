@@ -1,6 +1,6 @@
 #include "material.h"
 
-material diffuse_create(vector albedo) {
+material diffuse_create(texture* albedo) {
     return (material) {
         .id = material_diffuse,
         .data = (material_data) {

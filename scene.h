@@ -11,6 +11,8 @@
 
 typedef struct scene {
     object* objects;
+    material* materials;
+    texture* textures;
     object* nodes;
     object root;
 } scene;

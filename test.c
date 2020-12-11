@@ -6,9 +6,6 @@
 #include "ray.h"
 #include "vector.h"
 
-#define _MM_SHUFFLE(fp3,fp2,fp1,fp0) \
-    (((fp3) << 6) | ((fp2) << 4) | ((fp1) << 2) | (fp0))
-
 bool bbounding_box_hit3(bounding_box *box, ray *r, float t_min, float t_max) {
     float t0, t1;
     float bxmin = (box->minimum.x - r->origin.x) / r->direction.x;

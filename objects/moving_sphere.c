@@ -36,7 +36,7 @@ bool moving_sphere_hit(moving_sphere* s, ray* r, float t_min, float t_max, hit* 
 
     vector outward_normal = vector_divide_scalar(vector_subtract(record->p, center), s->radius);
     hit_set_face_normal(record, r, outward_normal);
-    record->mat = &s->mat;
+    record->mat = s->mat;
 
     return true;
 }

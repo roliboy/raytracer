@@ -12,7 +12,7 @@ typedef struct moving_sphere {
     float time0;
     float time1;
     float radius;
-    material mat;
+    material* mat;
 } moving_sphere;
 
 bool moving_sphere_hit(moving_sphere* s, ray* r, float t_min, float t_max, hit* record);

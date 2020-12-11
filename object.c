@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-object sphere_create(vector center, float radius, material mat) {
+object sphere_create(vector center, float radius, material* mat) {
     return (object) {
         .id = object_sphere,
         .data = (object_data) {
@@ -21,7 +21,7 @@ object sphere_create(vector center, float radius, material mat) {
     };
 }
 
-object moving_sphere_create(vector center0, vector center1, float time0, float time1, float radius, material mat) {
+object moving_sphere_create(vector center0, vector center1, float time0, float time1, float radius, material* mat) {
     return (object) {
         .id = object_moving_sphere,
         .data = (object_data) {

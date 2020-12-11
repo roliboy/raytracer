@@ -3,6 +3,7 @@
 #include "materials/dielectric.h"
 #include "materials/diffuse.h"
 #include "materials/metal.h"
+#include "texture.h"
 #include "vector.h"
 #include "ray.h"
 
@@ -24,7 +25,8 @@ typedef struct material {
     material_data data;
 } material;
 
-material diffuse_create(vector albedo);
+material diffuse_create(texture* albedo);
+//material diffuse_create(texture*);
 material metal_create(vector albedo, float fuzz);
 material dielectric_create(float ir);
 bool material_scatter(material* mat, ray* r_in, hit* record, vector* attenuation, ray* r_out);
