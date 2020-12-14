@@ -38,7 +38,8 @@ scene scene_load(char* filename) {
 //    sphere 0.000000 -1000.000000 0.000000 1000.000000 diffuse 0.500000 0.500000 0.500000
 
 //    textures[c] = checker_texture_create(vector_create(1, 1, 1), vector_create(0, 0, 0));
-    textures[c] = noise_texture_create(4);
+//    textures[c] = noise_texture_create(4);
+    textures[c] = image_texture_create("images/earth.ppm");
     materials[c] = diffuse_create(&textures[c]);
   //  objects[c] = sphere_create(vector_create(0, -1000, 0), 1001.001, &materials[c]);
     objects[c] = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);

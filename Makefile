@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS  = -Wall -Wpedantic -O2 -march=native -fopenmp -mavx2
 LDFLAGS = -lm -lSDL2
 
-OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o build/texture.o build/solid_color.o build/checker_texture.o build/noise.o build/noise_texture.o
+OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o build/texture.o build/solid_color.o build/checker_texture.o build/noise.o build/noise_texture.o build/image_texture.o
 
 all: tracer
 
@@ -80,6 +80,9 @@ build/noise.o: noise.c noise.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 build/noise_texture.o: textures/noise_texture.c textures/noise_texture.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
+
+build/image_texture.o: textures/image_texture.c textures/image_texture.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 .PHONY: clean

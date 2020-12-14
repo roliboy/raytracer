@@ -1,5 +1,6 @@
 #include "texture.h"
 #include "noise.h"
+#include "util.h"
 
 texture solid_color_create(vector color) {
     return (texture) {
@@ -37,6 +38,22 @@ texture noise_texture_create(float scale) {
     };
 }
 
+texture image_texture_create(char* file) {
+    unsigned int width;
+    unsigned int height;
+    unsigned char* bytes = load_ppm(file, &width, &height);
+    return (texture) {
+        .id = texture_image_texture,
+        .data = (texture_data) {
+            .image_texture = (image_texture) {
+                .bytes = bytes,
+                .width = width,
+                .height = height
+            }
+        }
+    };
+}
+
 vector texture_value(texture *t, float u, float v, vector p) {
     switch (t->id) {
         case texture_solid_color:
@@ -45,6 +62,8 @@ vector texture_value(texture *t, float u, float v, vector p) {
             return checker_texture_value(&t->data.checker_texture, u, v, p);
         case texture_noise_texture:
             return noise_texture_value(&t->data.noise_texture, p);
+        case texture_image_texture:
+            return image_texture_value(&t->data.image_texture, u, v, p);
         default:
             return vector_create(255, 0, 255);
     }
