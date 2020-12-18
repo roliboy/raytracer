@@ -54,6 +54,17 @@ texture image_texture_create(char* file) {
     };
 }
 
+texture invert_texture_create(texture* inner) {
+    return (texture) {
+        .id = texture_invert_texture,
+        .data = (texture_data) {
+            .invert_texture = (invert_texture) {
+                .inner = inner
+            }
+        }
+    };
+}
+
 vector texture_value(texture *t, float u, float v, vector p) {
     switch (t->id) {
         case texture_solid_color:
@@ -64,6 +75,8 @@ vector texture_value(texture *t, float u, float v, vector p) {
             return noise_texture_value(&t->data.noise_texture, p);
         case texture_image_texture:
             return image_texture_value(&t->data.image_texture, u, v, p);
+        case texture_invert_texture:
+            return invert_texture_value(&t->data.invert_texture, u, v, p);
         default:
             return vector_create(255, 0, 255);
     }

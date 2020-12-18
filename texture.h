@@ -5,12 +5,14 @@
 #include "textures/checker_texture.h"
 #include "textures/noise_texture.h"
 #include "textures/image_texture.h"
+#include "textures/invert_texture.h"
 
 typedef enum texture_id {
     texture_solid_color = 0,
     texture_checker_texture = 1,
     texture_noise_texture = 2,
-    texture_image_texture = 3
+    texture_image_texture = 3,
+    texture_invert_texture = 4
 } texture_id;
 
 typedef union texture_data {
@@ -18,6 +20,7 @@ typedef union texture_data {
     checker_texture checker_texture;
     noise_texture noise_texture;
     image_texture image_texture;
+    invert_texture invert_texture;
 } texture_data;
 
 typedef struct texture {
@@ -29,4 +32,5 @@ texture solid_color_create(vector color);
 texture checker_texture_create(vector even, vector odd);
 texture noise_texture_create(float scale);
 texture image_texture_create(char* file);
+texture invert_texture_create(texture* inner);
 vector texture_value(texture* t, float u, float v, vector p);

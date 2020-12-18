@@ -20,24 +20,23 @@ vector color(ray* r, scene* world, int depth) {
         return vector_create(0, 0, 0);
 
     hit record;
-    if (scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record)) {
-        ray scattered;
-        vector attenuation;
-        if (material_scatter(record.mat, r, &record, &attenuation, &scattered))
-            return vector_multiply(
-                    attenuation,
-                    color(&scattered, world, depth - 1)
-                    );
+    if (!scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record))
+//        return vector_create(0.35, 0.40, 0.50);
         return vector_create(0, 0, 0);
-    }
 
-    vector unit_direction = vector_normalize(r->direction);
-    float t = 0.5 * (unit_direction.y + 1.0);
+    ray scattered;
+    vector attenuation;
+    vector emitted = material_emit(record.mat, record.u, record.v, record.p);
+
+    if (!material_scatter(record.mat, r, &record, &attenuation, &scattered))
+        return emitted;
+
     return vector_add(
-            vector_multiply_scalar(
-                vector_create(1.0, 1.0, 1.0), 1.0 - t),
-            vector_multiply_scalar(
-                vector_create(0.5, 0.7, 1.0), t)
+            emitted,
+            vector_multiply(
+                attenuation,
+                color(&scattered, world, depth - 1)
+                )
             );
 }
 
@@ -102,10 +101,13 @@ int render_thread(void* _fb) {
 
 int main() {
     float aspect_ratio = 16.0 / 9.0;
-    int image_width = 1920 / 8;
+//    int image_width = 1920 / 8;
+    int image_width = 1920 / 4;
     int image_height = (int)(image_width / aspect_ratio);
-    int samples_per_pixel = 32;
-    int max_depth = 8;
+//    int samples_per_pixel = 32;
+    int samples_per_pixel = 64;
+//    int max_depth = 8;
+    int max_depth = 32;
 
 
     scene scn = scene_load("scenes/book1_cover_overkill.scn");

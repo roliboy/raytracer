@@ -39,11 +39,17 @@ scene scene_load(char* filename) {
 
 //    textures[c] = checker_texture_create(vector_create(1, 1, 1), vector_create(0, 0, 0));
 //    textures[c] = noise_texture_create(4);
-    textures[c] = image_texture_create("images/earth.ppm");
-    materials[c] = diffuse_create(&textures[c]);
+  //  textures[c] = image_texture_create("images/earth.ppm");
+  //  materials[c] = diffuse_create(&textures[c]);
+
+    texture* nt = (texture*)malloc(sizeof(texture));
+    *nt = noise_texture_create(4);
+    textures[c] = invert_texture_create(nt);
+    materials[c] = diffuse_light_create(&textures[c]);
   //  objects[c] = sphere_create(vector_create(0, -1000, 0), 1001.001, &materials[c]);
     objects[c] = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);
 //sphere 4.000000 1.000000 0.000000 1.000000 metal 0.700000 0.600000 0.500000 0.000000
+
 
     //
     c++;
