@@ -10,6 +10,39 @@
 #include <math.h>
 
 scene scene_load(char* filename) {
+    int object_count = 3;
+
+    object* objects = (object*)malloc(sizeof(object) * object_count);
+    material* materials = (material*)malloc(sizeof(material) * object_count);
+    texture* textures = (texture*)malloc(sizeof(texture) * object_count);
+    //TODO: get node count
+    object* nodes = (object*)malloc(sizeof(object) * object_count * 1.5); //shrug
+
+    textures[0] = noise_texture_create(4);
+    textures[1] = noise_texture_create(4);
+    textures[2] = solid_color_create(vector_create(4, 4, 4));
+
+    materials[0] = diffuse_create(&textures[0]);
+    materials[1] = diffuse_create(&textures[1]);
+    materials[2] = diffuse_light_create(&textures[2]);
+
+    objects[0] = sphere_create(vector_create(0, -1000, 0), 1000, &materials[0]);
+    objects[1] = sphere_create(vector_create(0, 2, 0), 2, &materials[1]);
+    objects[2] = rectangle_create(3, 1, 5, 3, -2, &materials[2]);
+    //objects[2] = sphere_create(vector_create(0, 7, 0), 2, &materials[2]);
+
+    object* root = node_create(objects, nodes, 0, object_count, 0, 1);
+
+    return (scene) {
+        .objects = objects,
+        .materials = materials,
+        .textures = textures,
+        .nodes = nodes,
+        .root = *root
+    };
+}
+
+scene _scene_load(char* filename) {
     FILE* fp;
 
     fp = fopen(filename, "r");

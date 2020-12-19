@@ -45,6 +45,8 @@ bool object_bounding_box(object* obj, float time0, float time1, bounding_box* bo
             return sphere_bounding_box(&obj->data.sphere, time0, time1, box);
         case object_moving_sphere:
             return moving_sphere_bounding_box(&obj->data.moving_sphere, time0, time1, box);
+        case object_rectangle:
+            return rectangle_bounding_box(&obj->data.rectangle, time0, time1, box);
         default:
             printf("object id: %d\n", obj->id);
             exit(69);
@@ -126,6 +128,8 @@ bool object_hit(object* obj, ray* r, float t_min, float t_max, hit* record) {
             return sphere_hit(&obj->data.sphere, r, t_min, t_max, record);
         case object_moving_sphere:
             return moving_sphere_hit(&obj->data.moving_sphere, r, t_min, t_max, record);
+        case object_rectangle:
+            return rectangle_hit(&obj->data.rectangle, r, t_min, t_max, record);
         default:
             puts("chiar el");
             exit(-1);

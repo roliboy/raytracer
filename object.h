@@ -3,6 +3,7 @@
 #include "objects/node.h"
 #include "objects/sphere.h"
 #include "objects/moving_sphere.h"
+#include "objects/rectangle.h"
 #include "material.h"
 #include "vector.h"
 #include <stdbool.h>
@@ -11,13 +12,15 @@
 typedef enum object_id {
     object_node = 0,
     object_sphere = 1,
-    object_moving_sphere = 2
+    object_moving_sphere = 2,
+    object_rectangle = 3
 } object_id;
 
 typedef union object_data {
     node node;
     sphere sphere;
     moving_sphere moving_sphere;
+    rectangle rectangle;
 } object_data;
 
 typedef struct object {
