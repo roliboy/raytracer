@@ -2,6 +2,7 @@
 #include "hit.h"
 #include "material.h"
 #include "object.h"
+#include "objects/rectangle.h"
 #include "texture.h"
 #include "vector.h"
 
@@ -10,7 +11,7 @@
 #include <math.h>
 
 scene scene_load(char* filename) {
-    int object_count = 3;
+    int object_count = 6;
 
     object* objects = (object*)malloc(sizeof(object) * object_count);
     material* materials = (material*)malloc(sizeof(material) * object_count);
@@ -18,18 +19,27 @@ scene scene_load(char* filename) {
     //TODO: get node count
     object* nodes = (object*)malloc(sizeof(object) * object_count * 1.5); //shrug
 
-    textures[0] = noise_texture_create(4);
-    textures[1] = noise_texture_create(4);
-    textures[2] = solid_color_create(vector_create(4, 4, 4));
+    textures[0] = solid_color_create(vector_create(.65, .05, .05));
+    textures[1] = solid_color_create(vector_create(.73, .73, .73));
+    textures[2] = solid_color_create(vector_create(.12, .45, .15));
+    textures[3] = solid_color_create(vector_create(15, 15, 15));
 
     materials[0] = diffuse_create(&textures[0]);
     materials[1] = diffuse_create(&textures[1]);
-    materials[2] = diffuse_light_create(&textures[2]);
+    materials[2] = diffuse_create(&textures[2]);
+    materials[3] = diffuse_light_create(&textures[3]);
 
-    objects[0] = sphere_create(vector_create(0, -1000, 0), 1000, &materials[0]);
-    objects[1] = sphere_create(vector_create(0, 2, 0), 2, &materials[1]);
-    objects[2] = rectangle_create(3, 1, 5, 3, -2, &materials[2]);
-    //objects[2] = sphere_create(vector_create(0, 7, 0), 2, &materials[2]);
+    for (int i = 0; i < object_count; i++) {
+        objects[i] = sphere_create(vector_create(0, 0, 0), 1, &materials[0]);
+    }
+
+
+    objects[0] = yz_rectangle_create(0, 555, 0, 555, 555, &materials[2]); //green wall
+    objects[1] = yz_rectangle_create(0, 555, 0, 555, 0, &materials[0]); //red wall
+    objects[2] = zx_rectangle_create(227, 332, 213, 343, 554, &materials[3]); //light
+    objects[3] = zx_rectangle_create(0, 555, 0, 555, 0, &materials[1]);   //bottom
+    objects[4] = zx_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //top
+    objects[5] = xy_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //back
 
     object* root = node_create(objects, nodes, 0, object_count, 0, 1);
 

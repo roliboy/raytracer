@@ -13,14 +13,18 @@ typedef enum object_id {
     object_node = 0,
     object_sphere = 1,
     object_moving_sphere = 2,
-    object_rectangle = 3
+    object_xy_rectangle = 3,
+    object_yz_rectangle = 4,
+    object_zx_rectangle = 5
 } object_id;
 
 typedef union object_data {
     node node;
     sphere sphere;
     moving_sphere moving_sphere;
-    rectangle rectangle;
+    xy_rectangle xy_rectangle;
+    yz_rectangle yz_rectangle;
+    zx_rectangle zx_rectangle;
 } object_data;
 
 typedef struct object {
