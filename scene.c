@@ -2,7 +2,6 @@
 #include "hit.h"
 #include "material.h"
 #include "object.h"
-#include "objects/rectangle.h"
 #include "texture.h"
 #include "vector.h"
 
@@ -11,7 +10,7 @@
 #include <math.h>
 
 scene scene_load(char* filename) {
-    int object_count = 6;
+    int object_count = 8;
 
     object* objects = (object*)malloc(sizeof(object) * object_count);
     material* materials = (material*)malloc(sizeof(material) * object_count);
@@ -36,10 +35,13 @@ scene scene_load(char* filename) {
 
     objects[0] = yz_rectangle_create(0, 555, 0, 555, 555, &materials[2]); //green wall
     objects[1] = yz_rectangle_create(0, 555, 0, 555, 0, &materials[0]); //red wall
-    objects[2] = zx_rectangle_create(227, 332, 213, 343, 554, &materials[3]); //light
+    objects[2] = zx_rectangle_create(227, 332, 213, 343, 554, &materials[2]); //light
     objects[3] = zx_rectangle_create(0, 555, 0, 555, 0, &materials[1]);   //bottom
     objects[4] = zx_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //top
     objects[5] = xy_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //back
+
+    objects[6] = box_create(vector_create(130, 0, 65), vector_create(295, 165, 230), &materials[1]);
+    objects[7] = box_create(vector_create(265, 0, 295), vector_create(430, 330, 460), &materials[1]);
 
     object* root = node_create(objects, nodes, 0, object_count, 0, 1);
 

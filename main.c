@@ -21,8 +21,8 @@ vector color(ray* r, scene* world, int depth) {
 
     hit record;
     if (!scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record))
-//        return vector_create(0.70, 0.80, 1);
-        return vector_create(0, 0, 0);
+        return vector_create(0.70, 0.80, 1);
+//        return vector_create(0, 0, 0);
 
     ray scattered;
     vector attenuation;
@@ -101,8 +101,8 @@ int render_thread(void* _fb) {
 
 int main() {
     float aspect_ratio = 16.0 / 9.0;
-//    int image_width = 1920 / 8;
-    int image_width = 1920 / 4;
+    int image_width = 1920 / 8;
+//    int image_width = 1920 / 4;
     int image_height = (int)(image_width / aspect_ratio);
 //    int samples_per_pixel = 32;
     int samples_per_pixel = 64;

@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS  = -Wall -Wpedantic -O2 -march=native -fopenmp -mavx2
 LDFLAGS = -lm -lSDL2
 
-OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o build/texture.o build/solid_color.o build/checker_texture.o build/noise.o build/noise_texture.o build/image_texture.o build/diffuse_light.o build/invert_texture.o build/rectangle.o
+OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o build/texture.o build/solid_color.o build/checker_texture.o build/noise.o build/noise_texture.o build/image_texture.o build/diffuse_light.o build/invert_texture.o build/rectangle.o build/box.o
 
 all: tracer
 
@@ -92,6 +92,9 @@ build/invert_texture.o: textures/invert_texture.c textures/invert_texture.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 build/rectangle.o: objects/rectangle.c objects/rectangle.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
+
+build/box.o: objects/box.c objects/box.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 
