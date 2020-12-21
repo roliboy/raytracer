@@ -53,6 +53,8 @@ bool object_bounding_box(object* obj, float time0, float time1, bounding_box* bo
             return zx_rectangle_bounding_box(&obj->data.zx_rectangle, time0, time1, box);
         case object_box:
             return box_bounding_box(&obj->data.box, time0, time1, box);
+        case object_constant_medium:
+            return constant_medium_bounding_box(&obj->data.constant_medium, time0, time1, box);
         default:
             printf("object id: %d\n", obj->id);
             exit(69);
@@ -142,6 +144,8 @@ bool object_hit(object* obj, ray* r, float t_min, float t_max, hit* record) {
             return zx_rectangle_hit(&obj->data.zx_rectangle, r, t_min, t_max, record);
         case object_box:
             return box_hit(&obj->data.box, r, t_min, t_max, record);
+        case object_constant_medium:
+            return constant_medium_hit(&obj->data.constant_medium, r, t_min, t_max, record);
         default:
             puts("chiar el");
             exit(-1);

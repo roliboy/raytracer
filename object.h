@@ -1,5 +1,6 @@
 #pragma once
 
+#include "objects/constant_medium.h"
 #include "objects/node.h"
 #include "objects/sphere.h"
 #include "objects/moving_sphere.h"
@@ -17,7 +18,8 @@ typedef enum object_id {
     object_xy_rectangle = 3,
     object_yz_rectangle = 4,
     object_zx_rectangle = 5,
-    object_box = 6
+    object_box = 6,
+    object_constant_medium = 7
 } object_id;
 
 typedef union object_data {
@@ -28,6 +30,7 @@ typedef union object_data {
     yz_rectangle yz_rectangle;
     zx_rectangle zx_rectangle;
     box box;
+    constant_medium constant_medium;
 } object_data;
 
 typedef struct object {

@@ -1,7 +1,9 @@
 #include "scene.h"
 #include "hit.h"
 #include "material.h"
+#include "materials/isotropic.h"
 #include "object.h"
+#include "objects/constant_medium.h"
 #include "texture.h"
 #include "vector.h"
 
@@ -35,13 +37,20 @@ scene scene_load(char* filename) {
 
     objects[0] = yz_rectangle_create(0, 555, 0, 555, 555, &materials[2]); //green wall
     objects[1] = yz_rectangle_create(0, 555, 0, 555, 0, &materials[0]); //red wall
-    objects[2] = zx_rectangle_create(227, 332, 213, 343, 554, &materials[2]); //light
+    objects[2] = zx_rectangle_create(227, 332, 213, 343, 554, &materials[3]); //light
     objects[3] = zx_rectangle_create(0, 555, 0, 555, 0, &materials[1]);   //bottom
     objects[4] = zx_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //top
     objects[5] = xy_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //back
 
-    objects[6] = box_create(vector_create(130, 0, 65), vector_create(295, 165, 230), &materials[1]);
-    objects[7] = box_create(vector_create(265, 0, 295), vector_create(430, 330, 460), &materials[1]);
+
+    object* b1 = (object*)malloc(sizeof(object));
+    object* b2 = (object*)malloc(sizeof(object));
+
+    *b1 = box_create(vector_create(130, 0, 65), vector_create(295, 165, 230), &materials[1]);
+    *b2 = box_create(vector_create(265, 0, 295), vector_create(430, 330, 460), &materials[1]);
+
+    objects[6] = constant_medium_create(b1, 0.01, &textures[2]);
+    objects[7] = constant_medium_create(b2, 0.01, &textures[0]);
 
     object* root = node_create(objects, nodes, 0, object_count, 0, 1);
 
@@ -89,10 +98,14 @@ scene _scene_load(char* filename) {
 
     texture* nt = (texture*)malloc(sizeof(texture));
     *nt = noise_texture_create(4);
-    textures[c] = invert_texture_create(nt);
-    materials[c] = diffuse_light_create(&textures[c]);
+//    textures[c] = invert_texture_create(nt);
+//    materials[c] = diffuse_light_create(&textures[c]);
   //  objects[c] = sphere_create(vector_create(0, -1000, 0), 1001.001, &materials[c]);
-    objects[c] = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);
+    //objects[c] = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);
+    textures[c] = solid_color_create(vector_create(0, 1, 1));
+    object* sph = (object*)malloc(sizeof(object));
+    *sph = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);
+    objects[c] = constant_medium_create(sph, 0.1, &textures[c]);
 //sphere 4.000000 1.000000 0.000000 1.000000 metal 0.700000 0.600000 0.500000 0.000000
 
 

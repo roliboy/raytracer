@@ -2,6 +2,7 @@
 
 #include "materials/dielectric.h"
 #include "materials/diffuse.h"
+#include "materials/isotropic.h"
 #include "materials/metal.h"
 #include "materials/diffuse_light.h"
 #include "texture.h"
@@ -13,7 +14,8 @@ typedef enum material_id {
     material_diffuse = 0,
     material_metal = 1,
     material_dielectric = 2,
-    material_diffuse_light = 3
+    material_diffuse_light = 3,
+    material_isotropic = 4
 } material_id;
 
 typedef union material_data {
@@ -21,6 +23,7 @@ typedef union material_data {
     metal metal;
     dielectric dielectric;
     diffuse_light diffuse_light;
+    isotropic isotropic;
 } material_data;
 
 typedef struct material {

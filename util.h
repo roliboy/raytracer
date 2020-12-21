@@ -1,5 +1,7 @@
 #pragma once
 
+#define infinity 0x1.fffffep+127f
+
 float random_float(float min, float max);
 int random_int(int min, int max);
 float clamp(float x, float min, float max);

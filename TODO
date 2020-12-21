@@ -1,5 +1,6 @@
 optimize hierarchy splitting
 rename constructos/destructors
-resource manager
+resource manager (global allocator?)
 thread scheduler
 extend parser
+translations and rotations (somehow)

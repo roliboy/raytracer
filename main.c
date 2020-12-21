@@ -101,19 +101,19 @@ int render_thread(void* _fb) {
 
 int main() {
     float aspect_ratio = 16.0 / 9.0;
-    int image_width = 1920 / 8;
-//    int image_width = 1920 / 4;
+//    int image_width = 1920 / 8;
+    int image_width = 1920 / 2;
     int image_height = (int)(image_width / aspect_ratio);
 //    int samples_per_pixel = 32;
-    int samples_per_pixel = 64;
-    int max_depth = 16;
+    int samples_per_pixel = 256;
+    int max_depth = 128;
 //    int max_depth = 128;
 
 
     scene scn = scene_load("scenes/book1_cover_overkill.scn");
 
-    //vector lookfrom = vector_create(13, 2, 3);
-    //vector lookat = vector_create(0, 0, 0);
+//    vector lookfrom = vector_create(13, 2, 3);
+  //  vector lookat = vector_create(0, 0, 0);
 
     vector lookfrom = vector_create(278, 278, -800);
     vector lookat = vector_create(278, 278, 0);
