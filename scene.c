@@ -68,7 +68,9 @@ scene scene_load(char* filename) {
     objects[c++] = constant_medium_create(b1, 0.2, &textures[5]);
     objects[c++] = constant_medium_create(b2, 0.0001, &textures[6]);
 
-    objects[c++] = sphere_create(vector_create(400, 200, 400), 100, &materials[5]);
+    object* tr = (object*)malloc(sizeof(object));
+    *tr = sphere_create(vector_create(400, 200, 400), 100, &materials[5]);
+    objects[c++] = translate_create(tr, vector_create(0, 200, 0));
     objects[c++] = sphere_create(vector_create(220, 280, 300), 80, &materials[6]);
 
     int ns = 1000;

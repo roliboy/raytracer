@@ -21,8 +21,8 @@ vector color(ray* r, scene* world, int depth) {
 
     hit record;
     if (!scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record))
-//        return vector_create(0.70, 0.80, 1);
-        return vector_create(0, 0, 0);
+        return vector_create(0.70, 0.80, 1);
+//        return vector_create(0, 0, 0);
 
     ray scattered;
     vector attenuation;

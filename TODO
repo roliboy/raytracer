@@ -4,3 +4,4 @@ resource manager (global allocator?)
 thread scheduler
 extend parser
 translations and rotations (somehow)
+move translate and rotate objects to different folder

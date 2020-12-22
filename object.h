@@ -6,6 +6,7 @@
 #include "objects/moving_sphere.h"
 #include "objects/rectangle.h"
 #include "objects/box.h"
+#include "objects/translate.h"
 #include "material.h"
 #include "vector.h"
 #include <stdbool.h>
@@ -19,7 +20,8 @@ typedef enum object_id {
     object_yz_rectangle = 4,
     object_zx_rectangle = 5,
     object_box = 6,
-    object_constant_medium = 7
+    object_constant_medium = 7,
+    object_translate = 8
 } object_id;
 
 typedef union object_data {
@@ -31,6 +33,7 @@ typedef union object_data {
     zx_rectangle zx_rectangle;
     box box;
     constant_medium constant_medium;
+    translate translate;
 } object_data;
 
 typedef struct object {
