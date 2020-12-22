@@ -1,9 +1,7 @@
 #include "scene.h"
 #include "hit.h"
 #include "material.h"
-#include "materials/isotropic.h"
 #include "object.h"
-#include "objects/constant_medium.h"
 #include "texture.h"
 #include "vector.h"
 
@@ -12,7 +10,7 @@
 #include <math.h>
 
 scene scene_load(char* filename) {
-    int object_count = 8;
+    int object_count = 2000;
 
     object* objects = (object*)malloc(sizeof(object) * object_count);
     material* materials = (material*)malloc(sizeof(material) * object_count);
@@ -20,37 +18,63 @@ scene scene_load(char* filename) {
     //TODO: get node count
     object* nodes = (object*)malloc(sizeof(object) * object_count * 1.5); //shrug
 
-    textures[0] = solid_color_create(vector_create(.65, .05, .05));
-    textures[1] = solid_color_create(vector_create(.73, .73, .73));
-    textures[2] = solid_color_create(vector_create(.12, .45, .15));
-    textures[3] = solid_color_create(vector_create(15, 15, 15));
+    int c = 0;
 
+    textures[0] = solid_color_create(vector_create(0.48, 0.83, 0.53));
+    textures[1] = solid_color_create(vector_create(7, 7, 7));
+    textures[2] = solid_color_create(vector_create(0.7, 0.3, 0.1));
+    textures[5] = solid_color_create(vector_create(0.2, 0.4, 0.9));
+    textures[6] = solid_color_create(vector_create(1, 1, 1));
+    textures[7] = image_texture_create("images/earth.ppm");
+    textures[8] = noise_texture_create(4);
+    textures[9] = solid_color_create(vector_create(0.73, 0.73, 0.73));
     materials[0] = diffuse_create(&textures[0]);
-    materials[1] = diffuse_create(&textures[1]);
+    materials[1] = diffuse_light_create(&textures[1]);
     materials[2] = diffuse_create(&textures[2]);
-    materials[3] = diffuse_light_create(&textures[3]);
+    materials[3] = dielectric_create(1.5);
+    materials[4] = metal_create(vector_create(0.8, 0.8, 0.9), 1.0);
+    materials[5] = diffuse_light_create(&textures[7]);
+    materials[6] = diffuse_create(&textures[8]);
+    materials[7] = diffuse_create(&textures[9]);
 
-    for (int i = 0; i < object_count; i++) {
-        objects[i] = sphere_create(vector_create(0, 0, 0), 1, &materials[0]);
+    int boxes_per_side = 20;
+    for (int i = 0; i < boxes_per_side; i++) {
+        for (int j = 0; j < boxes_per_side; j++) {
+            float w = 100.0;
+            float x0 = -1000.0 + i*w;
+            float z0 = -1000.0 + j*w;
+            float y0 = 0.0;
+            float x1 = x0 + w;
+            float y1 = random_float(1,101);
+            float z1 = z0 + w;
+
+            objects[c] = box_create(vector_create(x0, y0, z0), vector_create(x1, y1, z1), &materials[0]);
+            c++;
+        }
     }
 
 
-    objects[0] = yz_rectangle_create(0, 555, 0, 555, 555, &materials[2]); //green wall
-    objects[1] = yz_rectangle_create(0, 555, 0, 555, 0, &materials[0]); //red wall
-    objects[2] = zx_rectangle_create(227, 332, 213, 343, 554, &materials[3]); //light
-    objects[3] = zx_rectangle_create(0, 555, 0, 555, 0, &materials[1]);   //bottom
-    objects[4] = zx_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //top
-    objects[5] = xy_rectangle_create(0, 555, 0, 555, 555, &materials[1]); //back
-
+    objects[c++] = zx_rectangle_create(123, 423, 147, 412, 554, &materials[1]);
+    objects[c++] = moving_sphere_create(vector_create(400, 400, 200), vector_create(430, 400, 200), 0, 1, 50, &materials[2]);
+    objects[c++] = sphere_create(vector_create(260, 150, 45), 50, &materials[3]);
+    objects[c++] = sphere_create(vector_create(0, 150, 145), 50, &materials[4]);
+    objects[c++] = sphere_create(vector_create(360, 150, 145), 70, &materials[3]);
 
     object* b1 = (object*)malloc(sizeof(object));
+    *b1 = sphere_create(vector_create(360, 150, 145), 70, 0);
     object* b2 = (object*)malloc(sizeof(object));
+    *b2 = sphere_create(vector_create(0, 0, 0), 5000, 0);
 
-    *b1 = box_create(vector_create(130, 0, 65), vector_create(295, 165, 230), &materials[1]);
-    *b2 = box_create(vector_create(265, 0, 295), vector_create(430, 330, 460), &materials[1]);
+    objects[c++] = constant_medium_create(b1, 0.2, &textures[5]);
+    objects[c++] = constant_medium_create(b2, 0.0001, &textures[6]);
 
-    objects[6] = constant_medium_create(b1, 0.01, &textures[2]);
-    objects[7] = constant_medium_create(b2, 0.01, &textures[0]);
+    objects[c++] = sphere_create(vector_create(400, 200, 400), 100, &materials[5]);
+    objects[c++] = sphere_create(vector_create(220, 280, 300), 80, &materials[6]);
+
+    int ns = 1000;
+    for (int j = 0; j < ns; j++) {
+        objects[c++] = sphere_create(vector_add(vector_random_in_range(0,165), vector_create(-100, 270, 395)), 10, &materials[7]);
+    }
 
     object* root = node_create(objects, nodes, 0, object_count, 0, 1);
 
@@ -74,12 +98,10 @@ scene _scene_load(char* filename) {
     int object_count = 0;
     while (fscanf(fp, "%s", tag) == 1) {
         if (!strcmp(tag, "sphere")) object_count++;
+        if (!strcmp(tag, "box")) object_count++;
         if (!strcmp(tag, "moving_sphere")) object_count++;
+        if (!strcmp(tag, "constant_medium")) object_count++;
     }
-
-    //
-    object_count += 1;
-    //
 
     object* objects = (object*)malloc(sizeof(object) * object_count);
     material* materials = (material*)malloc(sizeof(material) * object_count);
@@ -89,29 +111,6 @@ scene _scene_load(char* filename) {
 
     rewind(fp);
     int c = 0;
-//    sphere 0.000000 -1000.000000 0.000000 1000.000000 diffuse 0.500000 0.500000 0.500000
-
-//    textures[c] = checker_texture_create(vector_create(1, 1, 1), vector_create(0, 0, 0));
-//    textures[c] = noise_texture_create(4);
-  //  textures[c] = image_texture_create("images/earth.ppm");
-  //  materials[c] = diffuse_create(&textures[c]);
-
-    texture* nt = (texture*)malloc(sizeof(texture));
-    *nt = noise_texture_create(4);
-//    textures[c] = invert_texture_create(nt);
-//    materials[c] = diffuse_light_create(&textures[c]);
-  //  objects[c] = sphere_create(vector_create(0, -1000, 0), 1001.001, &materials[c]);
-    //objects[c] = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);
-    textures[c] = solid_color_create(vector_create(0, 1, 1));
-    object* sph = (object*)malloc(sizeof(object));
-    *sph = sphere_create(vector_create(4, 1, 0), 1.001, &materials[c]);
-    objects[c] = constant_medium_create(sph, 0.1, &textures[c]);
-//sphere 4.000000 1.000000 0.000000 1.000000 metal 0.700000 0.600000 0.500000 0.000000
-
-
-    //
-    c++;
-    //
 
     char type[32];
     while (fscanf(fp, "%s", type) == 1) {
@@ -146,39 +145,6 @@ scene _scene_load(char* filename) {
                 c++;
             }
         }
-
-/*        if (!strcmp(type, "moving_sphere")) {
-            float x0, y0, z0, x1, y1, z1, rad;
-            float time0, time1;
-            fscanf(fp, "%f %f %f %f %f %f %f %f %f", &x0, &y0, &z0, &x1, &y1, &z1, &time0, &time1, &rad);
-            char mat[32];
-            fscanf(fp, "%s", mat);
-            if (!strcmp(mat, "diffuse")) {
-                float r, g, b;
-                fscanf(fp, "%f %f %f", &r, &g, &b);
-//                printf("diff moving sphere %f %f\n", time0, time1);
-                material mat = diffuse_create(texture_solid_color_create(vector_create(r, g, b)));
-                objects[c] = moving_sphere_create(vector_create(x0, y0, z0), vector_create(x1, y1, z1), time0, time1, rad, mat);
-                c++;
-            }
-            else if (!strcmp(mat, "dielectric")) {
-                float ir;
-                fscanf(fp, "%f", &ir);
-                //printf("%s %f %f %f %s %f\n", type, x, y, z, mat, i);
-                material mat = dielectric_create(ir);
-                objects[c] = moving_sphere_create(vector_create(x0, y0, z0), vector_create(x1, y1, z1), time0, time1, rad, mat);
-                c++;
-            }
-            else if (!strcmp(mat, "metal")) {
-                float r, g, b, f;
-                fscanf(fp, "%f %f %f %f", &r, &g, &b, &f);
-                //printf("%s %f %f %f %s %f %f %f %f\n", type, x, y, z, mat, r, g, b, f);
-                material mat = metal_create(vector_create(r, g, b), f);
-                objects[c] = moving_sphere_create(vector_create(x0, y0, z0), vector_create(x1, y1, z1), time0, time1, rad, mat);
-                c++;
-            }
-        }*/
-
     }
 
     fclose(fp);

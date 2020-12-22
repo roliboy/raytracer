@@ -21,8 +21,8 @@ vector color(ray* r, scene* world, int depth) {
 
     hit record;
     if (!scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record))
-        return vector_create(0.70, 0.80, 1);
-//        return vector_create(0, 0, 0);
+//        return vector_create(0.70, 0.80, 1);
+        return vector_create(0, 0, 0);
 
     ray scattered;
     vector attenuation;
@@ -102,10 +102,10 @@ int render_thread(void* _fb) {
 int main() {
     float aspect_ratio = 16.0 / 9.0;
 //    int image_width = 1920 / 8;
-    int image_width = 1920 / 2;
+    int image_width = 1920 / 8;
     int image_height = (int)(image_width / aspect_ratio);
 //    int samples_per_pixel = 32;
-    int samples_per_pixel = 256;
+    int samples_per_pixel = 64;
     int max_depth = 128;
 //    int max_depth = 128;
 
@@ -114,15 +114,17 @@ int main() {
 
 //    vector lookfrom = vector_create(13, 2, 3);
   //  vector lookat = vector_create(0, 0, 0);
-
-    vector lookfrom = vector_create(278, 278, -800);
+    vector lookfrom = vector_create(478, 278, -600);
     vector lookat = vector_create(278, 278, 0);
+
+//    vector lookfrom = vector_create(278, 278, -800);
+//    vector lookat = vector_create(278, 278, 0);
 
     vector vup = vector_create(0, 1, 0);
     float dist_to_focus = 10;
     float aperture = 0.1;
 
-    camera cam = camera_create(lookfrom, lookat, vup, 40, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+    camera cam = camera_create(lookfrom, lookat, vup, 30, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
     framebuffer fb = framebuffer_create(image_width, image_height);
 

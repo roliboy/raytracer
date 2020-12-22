@@ -107,4 +107,5 @@ build/isotropic.o: materials/isotropic.c materials/isotropic.h
 .PHONY: clean
 clean:
 	rm $(OBJECTS)
+	rm build/main.o
 	rm tracer
