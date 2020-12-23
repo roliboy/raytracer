@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS  = -Wall -Wpedantic -O2 -march=native -fopenmp -mavx2
 LDFLAGS = -lm -lSDL2
 
-OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o build/texture.o build/solid_color.o build/checker_texture.o build/noise.o build/noise_texture.o build/image_texture.o build/diffuse_light.o build/invert_texture.o build/rectangle.o build/box.o build/isotropic.o build/constant_medium.o build/translate.o
+OBJECTS = build/bounding_box.o build/camera.o build/dielectric.o build/diffuse.o build/framebuffer.o build/hit.o build/material.o build/metal.o build/moving_sphere.o build/node.o build/object.o build/ray.o build/scene.o build/sphere.o build/util.o build/vector.o build/texture.o build/solid_color.o build/checker_texture.o build/noise.o build/noise_texture.o build/image_texture.o build/diffuse_light.o build/invert_texture.o build/rectangle.o build/box.o build/isotropic.o build/constant_medium.o build/translate.o build/rotate.o
 
 all: tracer
 
@@ -104,6 +104,9 @@ build/isotropic.o: materials/isotropic.c materials/isotropic.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 build/translate.o: objects/translate.c objects/translate.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
+
+build/rotate.o: objects/rotate.c objects/rotate.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -c
 
 .PHONY: clean

@@ -2,6 +2,7 @@
 #include "hit.h"
 #include "material.h"
 #include "object.h"
+#include "objects/box.h"
 #include "texture.h"
 #include "vector.h"
 
@@ -77,6 +78,11 @@ scene scene_load(char* filename) {
     for (int j = 0; j < ns; j++) {
         objects[c++] = sphere_create(vector_add(vector_random_in_range(0,165), vector_create(-100, 270, 395)), 10, &materials[7]);
     }
+
+    object* rot = (object*)malloc(sizeof(object));
+    *rot = box_create(vector_create(-200, -200, -200), vector_create(200, 200, 200), &materials[5]);
+
+    objects[c++] = rotate_y_create(rot, 180);
 
     object* root = node_create(objects, nodes, 0, object_count, 0, 1);
 
