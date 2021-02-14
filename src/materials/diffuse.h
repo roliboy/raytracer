@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../vector.h"
 #include "../texture.h"
 #include <stdbool.h>
 

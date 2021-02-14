@@ -1,7 +1,7 @@
 #include "vector.h"
 
-#include "util.h"
 #include <math.h>
+#include "util.h"
 
 vector vector_create(float x, float y, float z) {
     return (vector) {

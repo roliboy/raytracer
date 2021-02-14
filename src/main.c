@@ -150,12 +150,5 @@ int main() {
     scene_destroy(&scn);
     SDL_WaitThread(renderer, NULL);
 
-    /*
-    printf("P3\n%d %d\n%d\n", fb.width, fb.height, 255);
-    for (int i = 0; i < fb.height * fb.width; i++) {
-        printf("%d %d %d\n", fb.buffer[i].r, fb.buffer[i].g, fb.buffer[i].b);
-    }
-    */
-
     framebuffer_destroy(&fb);
 }
