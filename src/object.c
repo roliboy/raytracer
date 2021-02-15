@@ -1,6 +1,7 @@
 #include "object.h"
 
 #include "material.h"
+#include "objects/constant_medium.h"
 #include "objects/node.h"
 #include "vector.h"
 #include "scene.h"
@@ -66,7 +67,7 @@ bool object_bounding_box(object* obj, float time0, float time1, bounding_box* bo
     return false;
 }
 
-object* node_create(object* objects, object* tree, int start, int end, float time0, float time1) {
+object* node_create(object** objects, int start, int end, float time0, float time1) {
     int axis = random_int(0, 2);
     int (*comparator)(const void*, const void*);
     //int (*comparator2)(const void*, const void*);
@@ -78,31 +79,45 @@ object* node_create(object* objects, object* tree, int start, int end, float tim
         comparator = &bounding_box_z_compare;
     int object_span = end - start;
 
+    // for (int i = 0; i < object_span; i++) {
+    //         printf("objects[%d] = %d %p\n", i, objects[i]->id, (void*)objects[i]);
+    //     }
+
     object* left;
     object* right;
 
     if (object_span == 1) {
-        left = &objects[start];
-        right = &objects[start];
+        // printf("objects[%d] = %d %p\n", start, objects[start]->id, (void*)objects[start]);
+        left = objects[start];
+        right = objects[start];
     }
     else if (object_span == 2) {
+        // printf("objects[%d] = %d %p\n", start, objects[start]->id, (void*)objects[start]);
         if (comparator(&objects[start], &objects[start + 1])) {
-            left = &objects[start];
-            right = &objects[start + 1];
+            left = objects[start];
+            right = objects[start + 1];
         } else {
-            left = &objects[start + 1];
-            right = &objects[start];
+            left = objects[start + 1];
+            right = objects[start];
         }
     }
     else {
 //        pritf("sorting from %p \n")
-        qsort(&objects[start], object_span, sizeof(object), comparator);
+        // object* objects -> &objects[start] -> memory address of start'th element
+        // object** objects -> objects[start] -> mem
+        // printf("objects[%d] = %d %p\n", start, objects[start]->id, (void*)objects[start]);
+        // printf("start: %p\n", &objects[start]);
+        // for (int i = 0; i < object_span; i++) {
+        //     printf("objects[%d], id: %d\t at: %p\t pointing to %p\n", i, objects[i]->id, (void*)&objects[i], (void*)objects[i]);
+        // }
+        // printf("size %d\n", (int)sizeof(object*));
+        qsort(&objects[start], object_span, sizeof(object*), comparator);
 
         int mid = start + object_span / 2;
         //left = (object*)malloc(sizeof(object));
         //right = (object*)malloc(sizeof(object));
-        left = node_create(objects, tree, start, mid, time0, time1);
-        right = node_create(objects, tree, mid, end, time0, time1);
+        left = node_create(objects, start, mid, time0, time1);
+        right = node_create(objects, mid, end, time0, time1);
     }
 
     bounding_box box_left, box_right;
@@ -114,9 +129,10 @@ object* node_create(object* objects, object* tree, int start, int end, float tim
 
     bounding_box box = bounding_box_surround(box_left, box_right);
 
-    static int index = 0;
+    // static int index = 0;
     //printf("%d\n", index);
-    object* root = &tree[index++];
+    // object* root = &tree[index++];
+    object* root = (object*)malloc(sizeof(object));
 
     *root = (object) {
         .id = object_node,
@@ -164,7 +180,13 @@ int bounding_box_x_compare(const void* a, const void* b) {
     bounding_box box_a;
     bounding_box box_b;
 
-    if (!object_bounding_box((object*)a, 0, 0, &box_a) || !object_bounding_box((object*)b, 0, 0, &box_b)) {
+    // object* obja = (*(object**)a);
+    // const object* obja = a;
+
+    // printf("xcompare %d \t %d\n", (*obja).id, ((object*)a)->id);
+    // printf("xcompare %p \t %d\n", (*obja).id, ((object*)a)->id);
+
+    if (!object_bounding_box(*(object**)a, 0, 0, &box_a) || !object_bounding_box(*(object**)b, 0, 0, &box_b)) {
         puts("reeex");
         exit(-1);
     }
@@ -176,9 +198,9 @@ int bounding_box_y_compare(const void* a, const void* b) {
     bounding_box box_a;
     bounding_box box_b;
 
-    if (!object_bounding_box((object*)a, 0, 0, &box_a) || !object_bounding_box((object*)b, 0, 0, &box_b)) {
+    if (!object_bounding_box(*(object**)a, 0, 0, &box_a) || !object_bounding_box(*(object**)b, 0, 0, &box_b)) {
         puts("reeey");
-//        printf("%s\n", (object*);
+//        printf("%s\n", *(object**);
         exit(-1);
     }
 
@@ -189,7 +211,7 @@ int bounding_box_z_compare(const void* a, const void* b) {
     bounding_box box_a;
     bounding_box box_b;
 
-    if (!object_bounding_box((object*)a, 0, 0, &box_a) || !object_bounding_box((object*)b, 0, 0, &box_b)) {
+    if (!object_bounding_box(*(object**)a, 0, 0, &box_a) || !object_bounding_box(*(object**)b, 0, 0, &box_b)) {
         puts("reeez");
         exit(-1);
     }

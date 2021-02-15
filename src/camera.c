@@ -5,7 +5,7 @@
 #include "vector.h"
 #include <math.h>
 
-camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist, float shutter_open, float shutter_cose) {
+camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist, float shutter_open, float shutter_close) {
     float theta = vfov * M_PI / 180.0;
     float h = tan(theta/2);
     float viewport_height = 2.0 * h;
@@ -40,7 +40,7 @@ camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, flo
         .w = w,
         .lens_radius = aperture / 2,
         .shutter_open = shutter_open,
-        .shutter_close = shutter_cose
+        .shutter_close = shutter_close
     };
 }
 

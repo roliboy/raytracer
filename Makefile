@@ -8,12 +8,12 @@ SOURCES := $(shell find $(SRCDIR) -name *.c)
 INCLUDES := $(shell find $(SRCDIR) -name *.h)
 OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
-CC = tcc
-CFLAGS = -Wall -Wpedantic -mavx2 -I$(SRCDIR)
+CC = gcc
+CFLAGS = -g -Wall -Wpedantic -mavx2 -fopenmp -I$(SRCDIR)
 # CFLAGS = -std=c99 -Wall -I.
 
 LINKER = gcc
-LFLAGS = -lm -lSDL2
+LFLAGS = -g -lm -lSDL2 -fopenmp
 # LFLAGS   = -Wall -I. -lm
 
 $(BINDIR)/$(TARGET): directories $(OBJECTS)
@@ -26,6 +26,7 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 
 .PHONY: directories
 directories:
+	@mkdir -p $(BINDIR)
 	@mkdir -p $(patsubst src%, obj%, $(shell find $(SRCDIR) -type d))
 
 .PHONY: clean

@@ -17,5 +17,5 @@ typedef struct camera {
     float shutter_close;
 } camera;
 
-camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist, float shutter_open, float shutter_cose);
+camera camera_create(vector lookfrom, vector lookat, vector vup, float vfov, float aspect_ratio, float aperture, float focus_dist, float shutter_open, float shutter_close);
 ray camera_get_ray(camera* c, float s, float t);

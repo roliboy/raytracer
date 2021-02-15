@@ -21,7 +21,7 @@ vector color(ray* r, scene* world, int depth) {
 
     hit record;
     if (!scene_hit(world, r, 0.001, 0x1.fffffep+127f, &record))
-        return vector_create(0.70, 0.80, 1);
+        return world->ambient;
 //        return vector_create(0, 0, 0);
 
     ray scattered;
@@ -100,55 +100,30 @@ int render_thread(void* _fb) {
 }
 
 int main() {
-    float aspect_ratio = 16.0 / 9.0;
-//    int image_width = 1920 / 8;
-    int image_width = 1920 / 8;
-    int image_height = (int)(image_width / aspect_ratio);
-//    int samples_per_pixel = 32;
-    int samples_per_pixel = 64;
-    int max_depth = 128;
-//    int max_depth = 128;
-
-
-    scene scn = scene_load("scenes/book1_cover_overkill.scn");
-
-//    vector lookfrom = vector_create(13, 2, 3);
-  //  vector lookat = vector_create(0, 0, 0);
-    vector lookfrom = vector_create(478, 278, -600);
-    vector lookat = vector_create(278, 278, 0);
-
-//    vector lookfrom = vector_create(278, 278, -800);
-//    vector lookat = vector_create(278, 278, 0);
-
-    vector vup = vector_create(0, 1, 0);
-    float dist_to_focus = 10;
-    float aperture = 0.1;
-
-    camera cam = camera_create(lookfrom, lookat, vup, 30, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
-
-    framebuffer fb = framebuffer_create(image_width, image_height);
+    scene scn = scene_load("scenes/test.scn");
+    camera cam = scene_get_camera(&scn);
+    framebuffer fb = framebuffer_create(scn.width, scn.height);
 
     SDL_Thread* renderer = SDL_CreateThread(render_thread, "renderer", (void*)&fb);
 
     #pragma omp parallel for
-    for (int y = image_height - 1; y >= 0; y--) {
-        for (int x = 0; x < image_width; x++) {
+    for (int y = scn.height - 1; y >= 0; y--) {
+        for (int x = 0; x < scn.width; x++) {
             vector pixel_color = vector_create(0, 0, 0);
-            for (int s = 0; s < samples_per_pixel; ++s) {
-                float u = ((float)x + random_float(0, 1) - 0.5) / (image_width - 1);
-                float v = ((float)y + random_float(0, 1) - 0.5) / (image_height - 1);
+            for (int s = 0; s < scn.samples_per_pixel; ++s) {
+                float u = ((float)x + random_float(0, 1) - 0.5) / (scn.width - 1);
+                float v = ((float)y + random_float(0, 1) - 0.5) / (scn.height - 1);
 
                 ray r = camera_get_ray(&cam, u, v);
-                pixel_color = vector_add(pixel_color, color(&r, &scn, max_depth));
+                pixel_color = vector_add(pixel_color, color(&r, &scn, scn.max_depth));
 
             }
-            vector rgb = vector_rgb(pixel_color, samples_per_pixel);
-            framebuffer_set(&fb, x, image_height - 1 - y, rgb);
+            vector rgb = vector_rgb(pixel_color, scn.samples_per_pixel);
+            framebuffer_set(&fb, x, scn.height - 1 - y, rgb);
         }
     }
 
-    scene_destroy(&scn);
+    // scene_destroy(&scn);
     SDL_WaitThread(renderer, NULL);
-
-    framebuffer_destroy(&fb);
+    // framebuffer_destroy(&fb);
 }
