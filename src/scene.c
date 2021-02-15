@@ -108,7 +108,7 @@
 scene scene_load(char *filename) {
   FILE *fp;
 
-  object *objects[1024];
+  object *objects[10000];
   int c = 0;
 
   fp = fopen(filename, "r");

@@ -9,11 +9,11 @@ INCLUDES := $(shell find $(SRCDIR) -name *.h)
 OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 CC = gcc
-CFLAGS = -g -Wall -Wpedantic -mavx2 -fopenmp -I$(SRCDIR)
+CFLAGS = -g -Wall -Wpedantic -mavx2 -I$(SRCDIR)
 # CFLAGS = -std=c99 -Wall -I.
 
 LINKER = gcc
-LFLAGS = -g -lm -lSDL2 -fopenmp
+LFLAGS = -g -Wall -Wpedantic -lm -lSDL2
 # LFLAGS   = -Wall -I. -lm
 
 $(BINDIR)/$(TARGET): directories $(OBJECTS)
