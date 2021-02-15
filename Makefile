@@ -29,6 +29,10 @@ directories:
 	@mkdir -p $(BINDIR)
 	@mkdir -p $(patsubst src%, obj%, $(shell find $(SRCDIR) -type d))
 
+.PHONY: run
+run:
+	@$(BINDIR)/$(TARGET)
+
 .PHONY: clean
 clean:
 	@rm -f $(OBJECTS)

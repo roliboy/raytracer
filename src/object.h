@@ -1,55 +1,48 @@
 #pragma once
 
-#include "objects/constant_medium.h"
-#include "objects/node.h"
-#include "objects/sphere.h"
-#include "objects/moving_sphere.h"
-#include "objects/rectangle.h"
-#include "objects/box.h"
-#include "objects/translate.h"
-#include "objects/rotate.h"
-#include "material.h"
-#include "vector.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "objects/box.h"
+#include "objects/constant_medium.h"
+#include "objects/moving_sphere.h"
+#include "objects/node.h"
+#include "objects/rectangle.h"
+#include "objects/rotate.h"
+#include "objects/sphere.h"
+#include "objects/translate.h"
+
 typedef enum object_id {
-    object_node = 0,
-    object_sphere = 1,
-    object_moving_sphere = 2,
-    object_xy_rectangle = 3,
-    object_yz_rectangle = 4,
-    object_zx_rectangle = 5,
-    object_box = 6,
-    object_constant_medium = 7,
-    object_translate = 8,
-    object_rotate_y = 9
+  object_node = 0,
+  object_sphere = 1,
+  object_moving_sphere = 2,
+  object_xy_rectangle = 3,
+  object_yz_rectangle = 4,
+  object_zx_rectangle = 5,
+  object_box = 6,
+  object_constant_medium = 7,
+  object_translate = 8,
+  object_rotate_y = 9
 } object_id;
 
 typedef union object_data {
-    node node;
-    sphere sphere;
-    moving_sphere moving_sphere;
-    xy_rectangle xy_rectangle;
-    yz_rectangle yz_rectangle;
-    zx_rectangle zx_rectangle;
-    box box;
-    constant_medium constant_medium;
-    translate translate;
-    rotate_y rotate_y;
+  node node;
+  sphere sphere;
+  moving_sphere moving_sphere;
+  xy_rectangle xy_rectangle;
+  yz_rectangle yz_rectangle;
+  zx_rectangle zx_rectangle;
+  box box;
+  constant_medium constant_medium;
+  translate translate;
+  rotate_y rotate_y;
 } object_data;
 
 typedef struct object {
-    object_id id;
-    object_data data;
+  object_id id;
+  object_data data;
 } object;
 
-object sphere_create(vector center, float radius, material* mat);
-object moving_sphere_create(vector center0, vector center1, float time0, float time1, float radius, material* mat);
-bool object_bounding_box(object* obj, float time0, float time1, bounding_box* box);
-object* node_create(object** objects, int start, int end, float time0, float time1);
-bool object_hit(object* obj, ray* r, float t_min, float t_max, hit* record);
-int bounding_box_x_compare(const void*, const void*);
-int bounding_box_y_compare(const void*, const void*);
-int bounding_box_z_compare(const void*, const void*);
-
+bool object_bounding_box(object *obj, float time0, float time1,
+                         bounding_box *box);
+bool object_hit(object *obj, ray *r, float t_min, float t_max, hit *record);

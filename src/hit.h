@@ -4,14 +4,15 @@
 
 typedef struct material material;
 typedef struct ray ray;
+
 typedef struct hit {
-    float t;
-    float u;
-    float v;
-    vector p;
-    vector n;
-    bool front_face;
-    material* mat;
+  float t;
+  float u;
+  float v;
+  vector p;
+  vector n;
+  bool front_face;
+  material *mat;
 } hit;
 
-void hit_set_face_normal(hit* h, ray* r, vector outward_normal);
+void hit_set_face_normal(hit *h, ray *r, vector outward_normal);

@@ -3,11 +3,10 @@
 #include <stdbool.h>
 
 typedef struct vector {
-    float x;
-    float y;
-    float z;
+  float x;
+  float y;
+  float z;
 } vector;
-
 
 vector vector_create(float x, float y, float z);
 vector vector_add(vector lhs, vector rhs);
