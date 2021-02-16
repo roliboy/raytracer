@@ -1,4 +1,4 @@
-//TODO: this
+// TODO: this
 #include "scene.h"
 
 #include <math.h>
@@ -105,7 +105,7 @@
 //                  .root = root};
 // }
 
-scene scene_load(char *filename) {
+scene *scene_create(char *filename) {
   FILE *fp;
 
   object *objects[10000];
@@ -115,21 +115,22 @@ scene scene_load(char *filename) {
   if (fp == NULL)
     exit(EXIT_FAILURE);
 
-  scene loaded_scene;
+  scene *loaded_scene = (scene *)malloc(sizeof(scene));
 
-  fscanf(fp, "%d %d", &loaded_scene.width, &loaded_scene.height);
-  fscanf(fp, "%d %d", &loaded_scene.samples_per_pixel, &loaded_scene.max_depth);
-  fscanf(fp, "%f %f %f", &loaded_scene.lookfrom.x, &loaded_scene.lookfrom.y,
-         &loaded_scene.lookfrom.z);
-  fscanf(fp, "%f %f %f", &loaded_scene.lookat.x, &loaded_scene.lookat.y,
-         &loaded_scene.lookat.z);
-  fscanf(fp, "%f %f %f", &loaded_scene.vup.x, &loaded_scene.vup.y,
-         &loaded_scene.vup.z);
-  fscanf(fp, "%f %f %f %f %f", &loaded_scene.fov, &loaded_scene.aperture,
-         &loaded_scene.dist_to_focus, &loaded_scene.shutter_open,
-         &loaded_scene.shutter_close);
-  fscanf(fp, "%f %f %f", &loaded_scene.ambient.x, &loaded_scene.ambient.y,
-         &loaded_scene.ambient.z);
+  fscanf(fp, "%d %d", &loaded_scene->width, &loaded_scene->height);
+  fscanf(fp, "%d %d", &loaded_scene->samples_per_pixel,
+         &loaded_scene->max_depth);
+  fscanf(fp, "%f %f %f", &loaded_scene->lookfrom.x, &loaded_scene->lookfrom.y,
+         &loaded_scene->lookfrom.z);
+  fscanf(fp, "%f %f %f", &loaded_scene->lookat.x, &loaded_scene->lookat.y,
+         &loaded_scene->lookat.z);
+  fscanf(fp, "%f %f %f", &loaded_scene->vup.x, &loaded_scene->vup.y,
+         &loaded_scene->vup.z);
+  fscanf(fp, "%f %f %f %f %f", &loaded_scene->fov, &loaded_scene->aperture,
+         &loaded_scene->dist_to_focus, &loaded_scene->shutter_open,
+         &loaded_scene->shutter_close);
+  fscanf(fp, "%f %f %f", &loaded_scene->ambient.x, &loaded_scene->ambient.y,
+         &loaded_scene->ambient.z);
 
   char object_type[32];
   while (fscanf(fp, "%s", object_type) == 1) {
@@ -167,7 +168,7 @@ scene scene_load(char *filename) {
 
   fclose(fp);
 
-  loaded_scene.root = node_create(objects, 0, c, 0, 1);
+  loaded_scene->root = node_create(objects, 0, c, 0, 1);
 
   return loaded_scene;
 }

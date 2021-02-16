@@ -12,6 +12,6 @@ typedef struct window {
   SDL_Thread *thread;
 } window;
 
-window *window_create(int width, int height, scene *scn);
+window *window_create(int width, int height, int buffer_width, int buffer_height);
 void window_wait(window *win);
 int window_thread(void *win);

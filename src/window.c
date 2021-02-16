@@ -6,25 +6,17 @@
 #include "framebuffer.h"
 #include "scene.h"
 #include "vector.h"
-// typedef struct window {
-//   framebuffer buffer;
-//   SDL_Thread *thread;
-// } window;
 
-window *window_create(int width, int height, scene *scn) {
+window *window_create(int width, int height, int buffer_width,
+                      int buffer_height) {
   window *created_window = (window *)malloc(sizeof(window));
   created_window->width = width;
   created_window->height = height;
-  created_window->buffer = framebuffer_create(scn->width, scn->height);
+  created_window->buffer = framebuffer_create(buffer_width, buffer_height);
   created_window->thread =
       SDL_CreateThread(window_thread, "window", (void *)created_window);
 
   return created_window;
-  // // vector widow_size = vector_create(width, height, 0);
-  // return (window){
-  //     .buffer = framebuffer_create(scn->width, scn->height),
-  //     .thread = SDL_CreateThread(window_thread, "window", (void
-  //     *)&widow_size)};
 }
 
 void window_wait(window *win) { SDL_WaitThread(win->thread, NULL); }

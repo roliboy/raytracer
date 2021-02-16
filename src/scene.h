@@ -28,7 +28,7 @@ typedef struct scene {
   object *root;
 } scene;
 
-scene scene_load(char *filename);
+scene *scene_create(char *filename);
 camera scene_get_camera(scene *scn);
 bool scene_hit(scene *scn, ray *r, float t_min, float t_max, hit *record);
 bool scene_bounding_box(scene *scn, float time0, float time1,
