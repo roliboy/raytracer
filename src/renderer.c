@@ -84,7 +84,8 @@ int renderer_thread(void *_renderer) {
       vector rgb = vector_rgb(pixel_color, this->scene->samples_per_pixel);
       framebuffer_set(this->framebuffer, x, this->scene->height - 1 - y, rgb);
     }
-    //TODO: use malloc and free instead of global allocator because multithreading
+    // TODO: use malloc and free instead of global allocator because
+    // multithreading
     deallocate(batch);
   }
 
@@ -95,7 +96,7 @@ int renderer_thread(void *_renderer) {
 #define segments 16
 bool assined[segments] = {false};
 
-bool renderer_getbatch(renderer *ren, int **batch) {
+bool _renderer_getbatch(renderer *ren, int **batch) {
   SDL_LockMutex(ren->mutex);
 
   int index = -1;
@@ -122,4 +123,56 @@ bool renderer_getbatch(renderer *ren, int **batch) {
   (*batch)[blocksize] = -1;
 
   return true;
+}
+
+//TODO: parallelize
+#define xfragments 24
+#define yfragments 12
+int xindex = -1;
+int yindex = yfragments - 1;
+bool renderer_getbatch(renderer *renderer, int **batch) {
+  int xblocksize = renderer->framebuffer->width / xfragments;
+  int yblocksize = renderer->framebuffer->height / yfragments;
+  bool done = false;
+
+  SDL_LockMutex(renderer->mutex);
+
+  xindex++;
+  if (xindex >= xfragments) {
+    xindex = 0;
+    yindex--;
+  }
+  if (yindex < 0) {
+    done = true;
+  }
+
+  // xindex++;
+  // if (xindex >= xfragments - 1) {
+  //   xindex = 0;
+  //   yindex++;
+  // }
+  // if (yindex >= yfragments - 2) {
+  //   done = true;
+  // }
+
+  if (done) {
+    SDL_UnlockMutex(renderer->mutex);
+    return false;
+  } else {
+    // printf("assigned blocks %d %d\n", xindex, yindex);
+
+    *batch = (int *)allocate(sizeof(int) * (xblocksize * yblocksize + 1));
+    int i = 0;
+    for (int y = yblocksize - 1; y >= 0; y--) {
+      for (int x = 0; x < xblocksize; x++) {
+        (*batch)[i++] =
+            (y + yindex * yblocksize) * renderer->framebuffer->width +
+            (x + xindex * xblocksize);
+      }
+    }
+    (*batch)[xblocksize * yblocksize] = -1;
+
+    SDL_UnlockMutex(renderer->mutex);
+    return true;
+  }
 }

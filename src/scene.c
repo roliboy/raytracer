@@ -9,17 +9,21 @@
 #include "camera.h"
 #include "hit.h"
 #include "material.h"
+#include "materials/diffuse_light.h"
 #include "object.h"
 #include "objects/box.h"
 #include "texture.h"
 #include "vector.h"
 
+// TODO: material sharing
+
 // scene _scene_load(char *filename) {
 //   int object_count = 2000;
 
 //   object *objects = (object *)allocate(sizeof(object) * object_count);
-//   material *materials = (material *)allocate(sizeof(material) * object_count);
-//   texture *textures = (texture *)allocate(sizeof(texture) * object_count);
+//   material *materials = (material *)allocate(sizeof(material) *
+//   object_count); texture *textures = (texture *)allocate(sizeof(texture) *
+//   object_count);
 //   // TODO: get node count
 //   object *nodes = (object *)allocate(sizeof(object) * object_count * 1.5); //
 //   shrug
@@ -109,6 +113,7 @@
 scene *scene_create(char *filename) {
   FILE *fp;
 
+  // TODO: make this dynamic
   object *objects[10000];
   int c = 0;
 
@@ -155,6 +160,12 @@ scene *scene_create(char *filename) {
         texture *tex = (texture *)allocate(sizeof(texture));
         *mat = diffuse_create(tex);
         *tex = solid_color_create(vector_create(r, g, b));
+      } else if (!strcmp(material_type, "diffuse_light")) {
+        float r, g, b;
+        fscanf(fp, "%f %f %f", &r, &g, &b);
+        texture *tex = (texture *)allocate(sizeof(texture));
+        *mat = diffuse_light_create(tex);
+        *tex = solid_color_create(vector_create(r, g, b));
       } else if (!strcmp(material_type, "dielectric")) {
         float ir;
         fscanf(fp, "%f", &ir);
@@ -163,6 +174,12 @@ scene *scene_create(char *filename) {
         float r, g, b, f;
         fscanf(fp, "%f %f %f %f", &r, &g, &b, &f);
         *mat = metal_create(vector_create(r, g, b), f);
+      } else if (!strcmp(material_type, "isotropic")) {
+        float r, g, b;
+        fscanf(fp, "%f %f %f", &r, &g, &b);
+        texture *tex = (texture *)allocate(sizeof(texture));
+        *mat = isotropic_create(tex);
+        *tex = solid_color_create(vector_create(r, g, b));
       }
     }
   }

@@ -9,7 +9,7 @@ int main() {
   const int window_width = 1280;
   const int window_height = 720;
 
-  scene *scn = scene_create("scenes/book1_cover.scn");
+  scene *scn = scene_create("scenes/book1_cover_light.scn");
   window *win =
       window_create(window_width, window_height, scn->width, scn->height);
   renderer *ren = renderer_create(scn, win->framebuffer);
