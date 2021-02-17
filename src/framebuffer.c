@@ -1,6 +1,7 @@
 #include "framebuffer.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -29,5 +30,24 @@ void framebuffer_set(framebuffer *fb, int x, int y, vector color) {
 }
 
 pixel *framebuffer_get(framebuffer *fb) { return fb->buffer; }
+
+// TODO: move to separate module
+void framebuffer_save(framebuffer *fb) {
+  FILE* file;
+  file = fopen("/tmp/render.ppm", "w");
+
+
+  fprintf(file, "P3\n");
+  fprintf(file, "%u %u\n", fb->width, fb->height);
+  fprintf(file, "255\n");
+
+  for (int i = 0; fb->buffer[i].x != -1; i++) {
+    fprintf(file, "%u %u %u\n", fb->buffer[i].r, fb->buffer[i].g, fb->buffer[i].b);
+  }
+
+  fclose(file);
+
+  system("convert /tmp/render.ppm render.png");
+}
 
 void framebuffer_destroy(framebuffer *fb) { free(fb->buffer); }

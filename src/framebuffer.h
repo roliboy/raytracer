@@ -22,4 +22,5 @@ typedef struct framebuffer {
 framebuffer *framebuffer_create(int width, int height);
 void framebuffer_set(framebuffer *fb, int x, int y, vector color);
 pixel *framebuffer_get(framebuffer *fb);
+void framebuffer_save(framebuffer *fb);
 void framebuffer_destroy(framebuffer *fb);

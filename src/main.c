@@ -1,4 +1,5 @@
 #include "allocator.h"
+#include "framebuffer.h"
 #include "renderer.h"
 #include "scene.h"
 #include "window.h"
@@ -15,6 +16,9 @@ int main() {
   renderer *ren = renderer_create(scn, win->framebuffer);
 
   renderer_wait(ren);
+
+  framebuffer_save(win->framebuffer);
+
   window_wait(win);
 
   allocator_terminate();
