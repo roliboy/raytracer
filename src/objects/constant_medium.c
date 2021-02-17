@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "../allocator.h"
 #include "../bounding_box.h"
 #include "../hit.h"
 #include "../material.h"
@@ -12,7 +13,7 @@
 #include "../vector.h"
 
 object constant_medium_create(object *boundary, float density, texture *phase) {
-  material *phase_function = (material *)malloc(sizeof(material));
+  material *phase_function = (material *)allocate(sizeof(material));
   *phase_function = isotropic_create(phase);
   return (object){.id = object_constant_medium,
                   .data = (object_data){.constant_medium = (constant_medium){

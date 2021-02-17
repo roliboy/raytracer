@@ -4,21 +4,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "allocator.h"
 #include "vector.h"
 
-framebuffer framebuffer_create(int width, int height) {
-  pixel *buffer = (pixel *)malloc(sizeof(pixel) * (width * height + 1));
+framebuffer *framebuffer_create(int width, int height) {
+  framebuffer *new_framebuffer = (framebuffer *)allocate(sizeof(framebuffer));
+  pixel *buffer = (pixel *)allocate(sizeof(pixel) * (width * height + 1));
   for (int i = 0; i < width * height; i++) {
     buffer[i] = (pixel){
         .r = 0x20, .g = 0x20, .b = 0x20, .x = i % width, .y = i / width};
   }
   buffer[width * height] = (pixel){-1, -1, -1, -1, -1};
 
-  return (framebuffer){
-      .width = width,
-      .height = height,
-      .buffer = buffer,
-  };
+  new_framebuffer->width = width;
+  new_framebuffer->height = height;
+  new_framebuffer->buffer = buffer;
+
+  return new_framebuffer;
 }
 
 void framebuffer_set(framebuffer *fb, int x, int y, vector color) {

@@ -9,21 +9,14 @@ typedef struct camera camera;
 typedef struct scene scene;
 
 typedef struct renderer {
-  SDL_Thread **threads;
-  SDL_mutex *mut;
-  scene *scn;
-  framebuffer *buffer;
-  int thread_count;
+  int worker_count;
+  SDL_Thread **workers;
+  SDL_mutex *mutex;
+  scene *scene;
+  framebuffer *framebuffer;
 } renderer;
 
-// typedef struct renderer_state {
-//   scene *scn;
-//   camera *cam;
-//   framebuffer *fb;
-//   renderer *renderers;
-// } renderer_state;
-
-renderer *renderer_create(scene *scn, framebuffer *buffer);
-void renderer_wait(renderer *renderers);
-int renderer_thread(void *state);
-bool renderer_getbatch(renderer *renderers, int **batch);
+renderer *renderer_create(scene *scene, framebuffer *framebuffer);
+void renderer_wait(renderer *renderer);
+int renderer_thread(void *renderer);
+bool renderer_getbatch(renderer *renderer, int **batch);

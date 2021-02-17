@@ -1,5 +1,6 @@
 #include "node.h"
 
+#include "../allocator.h"
 #include "../object.h"
 #include "../util.h"
 
@@ -52,7 +53,7 @@ object *node_create(object **objects, int start, int end, float time0,
 
   bounding_box box = bounding_box_surround(box_left, box_right);
 
-  object *root = (object *)malloc(sizeof(object));
+  object *root = (object *)allocate(sizeof(object));
 
   *root = (object){
       .id = object_node,

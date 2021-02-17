@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "allocator.h"
+
 float random_float(float min, float max) {
   return min + (max - min) * ((rand() + 1.0) / RAND_MAX);
 }
@@ -40,7 +42,7 @@ unsigned char *load_ppm(char *filename, unsigned int *width,
   fscanf(fp, "%*d");
 
   unsigned char *result =
-      (unsigned char *)malloc(sizeof(unsigned char) * 3 * *width * *height);
+      (unsigned char *)allocate(sizeof(unsigned char) * 3 * *width * *height);
 
   for (int i = 0; i < *width * *height * 3; i += 3) {
     fscanf(fp, "%hhu %hhu %hhu", &result[i + 0], &result[i + 1],

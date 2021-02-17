@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "allocator.h"
 #include "camera.h"
 #include "hit.h"
 #include "material.h"
@@ -16,11 +17,11 @@
 // scene _scene_load(char *filename) {
 //   int object_count = 2000;
 
-//   object *objects = (object *)malloc(sizeof(object) * object_count);
-//   material *materials = (material *)malloc(sizeof(material) * object_count);
-//   texture *textures = (texture *)malloc(sizeof(texture) * object_count);
+//   object *objects = (object *)allocate(sizeof(object) * object_count);
+//   material *materials = (material *)allocate(sizeof(material) * object_count);
+//   texture *textures = (texture *)allocate(sizeof(texture) * object_count);
 //   // TODO: get node count
-//   object *nodes = (object *)malloc(sizeof(object) * object_count * 1.5); //
+//   object *nodes = (object *)allocate(sizeof(object) * object_count * 1.5); //
 //   shrug
 
 //   int c = 0;
@@ -68,15 +69,15 @@
 //   50, &materials[4]); objects[c++] = sphere_create(vector_create(360, 150,
 //   145), 70, &materials[3]);
 
-//   object *b1 = (object *)malloc(sizeof(object));
+//   object *b1 = (object *)allocate(sizeof(object));
 //   *b1 = sphere_create(vector_create(360, 150, 145), 70, 0);
-//   object *b2 = (object *)malloc(sizeof(object));
+//   object *b2 = (object *)allocate(sizeof(object));
 //   *b2 = sphere_create(vector_create(0, 0, 0), 5000, 0);
 
 //   objects[c++] = constant_medium_create(b1, 0.2, &textures[5]);
 //   objects[c++] = constant_medium_create(b2, 0.0001, &textures[6]);
 
-//   object *tr = (object *)malloc(sizeof(object));
+//   object *tr = (object *)allocate(sizeof(object));
 //   *tr = sphere_create(vector_create(400, 200, 400), 100, &materials[5]);
 //   objects[c++] = translate_create(tr, vector_create(0, 200, 0));
 //   objects[c++] = sphere_create(vector_create(220, 280, 300), 80,
@@ -89,13 +90,13 @@
 //                                  10, &materials[7]);
 //   }
 
-//   object *rot = (object *)malloc(sizeof(object));
+//   object *rot = (object *)allocate(sizeof(object));
 //   *rot = box_create(vector_create(-200, -200, -200),
 //                     vector_create(200, 200, 200), &materials[5]);
 
 //   objects[c++] = rotate_y_create(rot, 180);
 
-//   object *root = (object*)malloc(sizeof(object));
+//   object *root = (object*)allocate(sizeof(object));
 //   root = node_create(objects, nodes, 0, object_count, 0, 1);
 
 //   return (scene){.objects = objects,
@@ -115,7 +116,7 @@ scene *scene_create(char *filename) {
   if (fp == NULL)
     exit(EXIT_FAILURE);
 
-  scene *loaded_scene = (scene *)malloc(sizeof(scene));
+  scene *loaded_scene = (scene *)allocate(sizeof(scene));
 
   fscanf(fp, "%d %d", &loaded_scene->width, &loaded_scene->height);
   fscanf(fp, "%d %d", &loaded_scene->samples_per_pixel,
@@ -135,13 +136,13 @@ scene *scene_create(char *filename) {
   char object_type[32];
   while (fscanf(fp, "%s", object_type) == 1) {
     if (!strcmp(object_type, "sphere")) {
-      material *mat = (material *)malloc(sizeof(material));
-      object *obj = (object *)malloc(sizeof(object));
+      material *mat = (material *)allocate(sizeof(material));
+      object *obj = (object *)allocate(sizeof(object));
 
       float x, y, z, rad;
       fscanf(fp, "%f %f %f %f", &x, &y, &z, &rad);
 
-      // TODO: move malloc into sphere_create?
+      // TODO: move allocate into sphere_create?
       *obj = sphere_create(vector_create(x, y, z), rad, mat);
       objects[c] = obj;
       c++;
@@ -151,7 +152,7 @@ scene *scene_create(char *filename) {
       if (!strcmp(material_type, "diffuse")) {
         float r, g, b;
         fscanf(fp, "%f %f %f", &r, &g, &b);
-        texture *tex = (texture *)malloc(sizeof(texture));
+        texture *tex = (texture *)allocate(sizeof(texture));
         *mat = diffuse_create(tex);
         *tex = solid_color_create(vector_create(r, g, b));
       } else if (!strcmp(material_type, "dielectric")) {
