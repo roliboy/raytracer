@@ -15,7 +15,7 @@ typedef struct constant_medium {
   material *phase_function;
 } constant_medium;
 
-object constant_medium_create(object *boundary, float density, texture *phase);
+object *constant_medium_create(object *boundary, float density, texture *phase);
 bool constant_medium_hit(constant_medium *cm, ray *r, float t_min, float t_max,
                          hit *record);
 bool constant_medium_bounding_box(constant_medium *cm, float time0, float time1,

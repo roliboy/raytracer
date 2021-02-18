@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "../allocator.h"
 #include "../bounding_box.h"
 #include "../hit.h"
 #include "../material.h"
@@ -10,13 +11,15 @@
 #include "../ray.h"
 #include "../vector.h"
 
-object xy_rectangle_create(float x0, float x1, float y0, float y1, float k,
-                           material *mat) {
-  return (object){
+object *xy_rectangle_create(float x0, float x1, float y0, float y1, float k,
+                            material *mat) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object = (object){
       .id = object_xy_rectangle,
       .data = (object_data){
           .xy_rectangle = (xy_rectangle){
               .x0 = x0, .x1 = x1, .y0 = y0, .y1 = y1, .k = k, .mat = mat}}};
+  return new_object;
 }
 
 bool xy_rectangle_hit(xy_rectangle *rect, ray *r, float t_min, float t_max,
@@ -53,13 +56,15 @@ bool xy_rectangle_bounding_box(xy_rectangle *rect, float time0, float time1,
   return true;
 }
 
-object yz_rectangle_create(float y0, float y1, float z0, float z1, float k,
-                           material *mat) {
-  return (object){
+object *yz_rectangle_create(float y0, float y1, float z0, float z1, float k,
+                            material *mat) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object = (object){
       .id = object_yz_rectangle,
       .data = (object_data){
           .yz_rectangle = (yz_rectangle){
               .y0 = y0, .y1 = y1, .z0 = z0, .z1 = z1, .k = k, .mat = mat}}};
+  return new_object;
 }
 
 bool yz_rectangle_hit(yz_rectangle *rect, ray *r, float t_min, float t_max,
@@ -96,13 +101,15 @@ bool yz_rectangle_bounding_box(yz_rectangle *rect, float time0, float time1,
   return true;
 }
 
-object zx_rectangle_create(float z0, float z1, float x0, float x1, float k,
-                           material *mat) {
-  return (object){
+object *zx_rectangle_create(float z0, float z1, float x0, float x1, float k,
+                            material *mat) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object = (object){
       .id = object_zx_rectangle,
       .data = (object_data){
           .zx_rectangle = (zx_rectangle){
               .z0 = z0, .z1 = z1, .x0 = x0, .x1 = x1, .k = k, .mat = mat}}};
+  return new_object;
 }
 
 bool zx_rectangle_hit(zx_rectangle *rect, ray *r, float t_min, float t_max,

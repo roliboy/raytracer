@@ -2,17 +2,21 @@
 
 #include <stdlib.h>
 
+#include "../allocator.h"
 #include "../texture.h"
 #include "../util.h"
 
-texture image_texture_create(char *file) {
+texture *image_texture_create(char *file) {
+  texture *new_texture = (texture *)allocate(sizeof(texture));
   unsigned int width;
   unsigned int height;
   unsigned char *bytes = load_ppm(file, &width, &height);
-  return (texture){.id = texture_image_texture,
-                   .data = (texture_data){
-                       .image_texture = (image_texture){
-                           .bytes = bytes, .width = width, .height = height}}};
+  *new_texture =
+      (texture){.id = texture_image_texture,
+                .data = (texture_data){
+                    .image_texture = (image_texture){
+                        .bytes = bytes, .width = width, .height = height}}};
+  return new_texture;
 }
 
 vector image_texture_value(image_texture *it, float u, float v, vector p) {

@@ -13,7 +13,7 @@ typedef struct sphere {
   material *mat;
 } sphere;
 
-object sphere_create(vector center, float radius, material *mat);
+object *sphere_create(vector center, float radius, material *mat);
 bool sphere_hit(sphere *s, ray *r, float t_min, float t_max, hit *record);
 bool sphere_bounding_box(sphere *s, float time0, float time1,
                          bounding_box *box);

@@ -21,6 +21,6 @@ typedef struct box {
   material *mat;
 } box;
 
-object box_create(vector min, vector max, material *mat);
+object *box_create(vector min, vector max, material *mat);
 bool box_hit(box *rect, ray *r, float t_min, float t_max, hit *record);
 bool box_bounding_box(box *rect, float time0, float time1, bounding_box *box);

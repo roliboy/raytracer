@@ -2,13 +2,13 @@
 
 from random import random, uniform
 
-print(f'{1920/8} {1080/8}')
+print(f'{int(1920/8)} {int(1080/8)}')
 print('128 128')
 print('13 2 3')
 print('0 0 0')
 print('0 1 0')
 print('20 0.1 10 0.0 1.0')
-print('0.07 0.08 0.1')
+print('0.7 0.8 1')
 
 sphere = lambda x, y, z, d: f"sphere {x} {y} {z} {d}"
 diffuse = lambda r, g, b: f"diffuse {r} {g} {b}"
@@ -31,11 +31,11 @@ for a in range(-20, 20):
         z = b + 0.75 * random()
 
         
-        if ((x - 0)**2 + (y - 1)**2 + (z - 0)**2)**0.5 < 2:
+        if ((x - 0)**2 + (y - 1)**2 + (z - 0)**2)**0.5 < 1.5:
             continue
-        if ((x + 4)**2 + (y - 1)**2 + (z - 0)**2)**0.5 < 2:
+        if ((x + 4)**2 + (y - 1)**2 + (z - 0)**2)**0.5 < 1.5:
             continue
-        if ((x - 4)**2 + (y - 1)**2 + (z - 0)**2)**0.5 < 2:
+        if ((x - 4)**2 + (y - 1)**2 + (z - 0)**2)**0.5 < 1.5:
             continue
 
         material = random()

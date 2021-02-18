@@ -17,7 +17,7 @@ typedef struct moving_sphere {
   material *mat;
 } moving_sphere;
 
-object moving_sphere_create(vector center0, vector center1, float time0,
+object *moving_sphere_create(vector center0, vector center1, float time0,
                             float time1, float radius, material *mat);
 bool moving_sphere_hit(moving_sphere *s, ray *r, float t_min, float t_max,
                        hit *record);

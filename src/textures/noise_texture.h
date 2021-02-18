@@ -10,5 +10,5 @@ typedef struct noise_texture {
   float scale;
 } noise_texture;
 
-texture noise_texture_create(float scale);
+texture *noise_texture_create(float scale);
 vector noise_texture_value(noise_texture *nt, vector p);

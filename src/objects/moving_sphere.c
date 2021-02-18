@@ -7,10 +7,12 @@
 #include "../object.h"
 #include "../ray.h"
 #include "../vector.h"
+#include "../allocator.h"
 
-object moving_sphere_create(vector center0, vector center1, float time0,
-                            float time1, float radius, material *mat) {
-  return (object){
+object *moving_sphere_create(vector center0, vector center1, float time0,
+                             float time1, float radius, material *mat) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object = (object){
       .id = object_moving_sphere,
       .data = (object_data){.moving_sphere = (moving_sphere){.center0 = center0,
                                                              .center1 = center1,
@@ -18,6 +20,7 @@ object moving_sphere_create(vector center0, vector center1, float time0,
                                                              .time1 = time1,
                                                              .radius = radius,
                                                              .mat = mat}}};
+  return new_object;
 }
 
 bool moving_sphere_hit(moving_sphere *s, ray *r, float t_min, float t_max,

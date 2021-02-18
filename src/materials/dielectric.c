@@ -2,16 +2,19 @@
 
 #include <math.h>
 
+#include "../allocator.h"
 #include "../hit.h"
 #include "../material.h"
 #include "../ray.h"
 #include "../util.h"
 #include "../vector.h"
 
-material dielectric_create(float ir) {
-  return (material){.id = material_dielectric,
-                    .data =
-                        (material_data){.dielectric = (dielectric){.ir = ir}}};
+material *dielectric_create(float ir) {
+  material *new_material = (material *)allocate(sizeof(material));
+  *new_material =
+      (material){.id = material_dielectric,
+                 .data = (material_data){.dielectric = (dielectric){.ir = ir}}};
+  return new_material;
 }
 
 bool dielectric_scatter(dielectric *mat, ray *r_in, hit *record,

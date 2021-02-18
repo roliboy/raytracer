@@ -1,13 +1,17 @@
 #include "metal.h"
 
+#include "../allocator.h"
 #include "../hit.h"
 #include "../material.h"
 #include "../ray.h"
 
-material metal_create(vector albedo, float fuzz) {
-  return (material){.id = material_metal,
-                    .data = (material_data){
-                        .metal = (metal){.albedo = albedo, .fuzz = fuzz}}};
+material *metal_create(vector albedo, float fuzz) {
+  material *new_material = (material *)allocate(sizeof(material));
+  *new_material =
+      (material){.id = material_metal,
+                 .data = (material_data){
+                     .metal = (metal){.albedo = albedo, .fuzz = fuzz}}};
+  return new_material;
 }
 
 bool metal_scatter(metal *mat, ray *r_in, hit *record, vector *attenuation,

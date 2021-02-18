@@ -12,6 +12,6 @@ typedef struct isotropic {
   texture *albedo;
 } isotropic;
 
-material isotropic_create(texture *albedo);
+material *isotropic_create(texture *albedo);
 bool isotropic_scatter(isotropic *mat, ray *r_in, hit *record,
                        vector *attenuation, ray *r_out);

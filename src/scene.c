@@ -141,45 +141,44 @@ scene *scene_create(char *filename) {
   char object_type[32];
   while (fscanf(fp, "%s", object_type) == 1) {
     if (!strcmp(object_type, "sphere")) {
-      material *mat = (material *)allocate(sizeof(material));
-      object *obj = (object *)allocate(sizeof(object));
-
       float x, y, z, rad;
       fscanf(fp, "%f %f %f %f", &x, &y, &z, &rad);
-
-      // TODO: move allocate into sphere_create?
-      *obj = sphere_create(vector_create(x, y, z), rad, mat);
-      objects[c] = obj;
-      c++;
 
       char material_type[32];
       fscanf(fp, "%s", material_type);
       if (!strcmp(material_type, "diffuse")) {
         float r, g, b;
         fscanf(fp, "%f %f %f", &r, &g, &b);
-        texture *tex = (texture *)allocate(sizeof(texture));
-        *mat = diffuse_create(tex);
-        *tex = solid_color_create(vector_create(r, g, b));
+        texture *tex = solid_color_create(vector_create(r, g, b));
+        material *mat = diffuse_create(tex);
+        object *obj = sphere_create(vector_create(x, y, z), rad, mat);
+        objects[c++] = obj;
       } else if (!strcmp(material_type, "diffuse_light")) {
         float r, g, b;
         fscanf(fp, "%f %f %f", &r, &g, &b);
-        texture *tex = (texture *)allocate(sizeof(texture));
-        *mat = diffuse_light_create(tex);
-        *tex = solid_color_create(vector_create(r, g, b));
+        texture *tex = solid_color_create(vector_create(r, g, b));
+        material *mat = diffuse_light_create(tex);
+        object *obj = sphere_create(vector_create(x, y, z), rad, mat);
+        objects[c++] = obj;
       } else if (!strcmp(material_type, "dielectric")) {
         float ir;
         fscanf(fp, "%f", &ir);
-        *mat = dielectric_create(ir);
+        material *mat = dielectric_create(ir);
+        object *obj = sphere_create(vector_create(x, y, z), rad, mat);
+        objects[c++] = obj;
       } else if (!strcmp(material_type, "metal")) {
         float r, g, b, f;
         fscanf(fp, "%f %f %f %f", &r, &g, &b, &f);
-        *mat = metal_create(vector_create(r, g, b), f);
+        material *mat = metal_create(vector_create(r, g, b), f);
+        object *obj = sphere_create(vector_create(x, y, z), rad, mat);
+        objects[c++] = obj;
       } else if (!strcmp(material_type, "isotropic")) {
         float r, g, b;
         fscanf(fp, "%f %f %f", &r, &g, &b);
-        texture *tex = (texture *)allocate(sizeof(texture));
-        *mat = isotropic_create(tex);
-        *tex = solid_color_create(vector_create(r, g, b));
+        texture *tex = solid_color_create(vector_create(r, g, b));
+        material *mat = isotropic_create(tex);
+        object *obj = sphere_create(vector_create(x, y, z), rad, mat);
+        objects[c++] = obj;
       }
     }
   }

@@ -2,15 +2,18 @@
 
 #include <math.h>
 
+#include "../allocator.h"
 #include "../texture.h"
 
-texture noise_texture_create(float scale) {
+texture *noise_texture_create(float scale) {
+  texture *new_texture = (texture *)allocate(sizeof(texture));
   noise_texture nt;
   nt.scale = scale;
   nt.n = noise_create();
 
-  return (texture){.id = texture_noise_texture,
-                   .data = (texture_data){.noise_texture = nt}};
+  *new_texture = (texture){.id = texture_noise_texture,
+                           .data = (texture_data){.noise_texture = nt}};
+  return new_texture;
 }
 
 vector noise_texture_value(noise_texture *nt, vector p) {

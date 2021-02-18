@@ -2,17 +2,20 @@
 
 #include <math.h>
 
+#include "../allocator.h"
 #include "../bounding_box.h"
 #include "../material.h"
 #include "../object.h"
 #include "../ray.h"
 #include "../vector.h"
 
-object sphere_create(vector center, float radius, material *mat) {
-  return (object){
+object *sphere_create(vector center, float radius, material *mat) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object = (object){
       .id = object_sphere,
       .data = (object_data){
           .sphere = (sphere){.center = center, .radius = radius, .mat = mat}}};
+  return new_object;
 }
 
 bool sphere_hit(sphere *s, ray *r, float t_min, float t_max, hit *record) {

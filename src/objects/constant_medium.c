@@ -12,14 +12,18 @@
 #include "../util.h"
 #include "../vector.h"
 
-object constant_medium_create(object *boundary, float density, texture *phase) {
-  material *phase_function = (material *)allocate(sizeof(material));
-  *phase_function = isotropic_create(phase);
-  return (object){.id = object_constant_medium,
-                  .data = (object_data){.constant_medium = (constant_medium){
-                                            .boundary = boundary,
-                                            .neg_inv_density = -1 / density,
-                                            .phase_function = phase_function}}};
+object *constant_medium_create(object *boundary, float density,
+                               texture *phase) {
+  // material *phase_function = (material *)allocate(sizeof(material));
+  material *phase_function = isotropic_create(phase);
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object =
+      (object){.id = object_constant_medium,
+               .data = (object_data){.constant_medium = (constant_medium){
+                                         .boundary = boundary,
+                                         .neg_inv_density = -1 / density,
+                                         .phase_function = phase_function}}};
+  return new_object;
 }
 
 bool constant_medium_hit(constant_medium *cm, ray *r, float t_min, float t_max,

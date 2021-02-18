@@ -1,13 +1,16 @@
 #include "diffuse.h"
 
+#include "../allocator.h"
 #include "../hit.h"
 #include "../material.h"
 #include "../ray.h"
 
-material diffuse_create(texture *albedo) {
-  return (material){
+material *diffuse_create(texture *albedo) {
+  material *new_material = (material *)allocate(sizeof(material));
+  *new_material = (material){
       .id = material_diffuse,
       .data = (material_data){.diffuse = (diffuse){.albedo = albedo}}};
+  return new_material;
 }
 
 bool diffuse_scatter(diffuse *mat, ray *r_in, hit *record, vector *attenuation,

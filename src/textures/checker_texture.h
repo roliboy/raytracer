@@ -9,5 +9,5 @@ typedef struct checker_texture {
   vector odd;
 } checker_texture;
 
-texture checker_texture_create(vector even, vector odd);
+texture *checker_texture_create(vector even, vector odd);
 vector checker_texture_value(checker_texture *ct, float u, float v, vector p);

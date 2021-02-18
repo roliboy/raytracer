@@ -1,5 +1,6 @@
 #include "translate.h"
 
+#include "../allocator.h"
 #include "../bounding_box.h"
 #include "../hit.h"
 #include "../material.h"
@@ -7,10 +8,13 @@
 #include "../ray.h"
 #include "../vector.h"
 
-object translate_create(object *inner, vector offset) {
-  return (object){.id = object_translate,
-                  .data = (object_data){.translate = (translate){
-                                            .inner = inner, .offset = offset}}};
+object *translate_create(object *inner, vector offset) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object =
+      (object){.id = object_translate,
+               .data = (object_data){
+                   .translate = (translate){.inner = inner, .offset = offset}}};
+  return new_object;
 }
 
 bool translate_hit(translate *tr, ray *r, float t_min, float t_max,

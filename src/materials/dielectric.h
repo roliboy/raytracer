@@ -11,6 +11,6 @@ typedef struct dielectric {
   float ir;
 } dielectric;
 
-material dielectric_create(float ir);
+material *dielectric_create(float ir);
 bool dielectric_scatter(dielectric *mat, ray *r_in, hit *record,
                         vector *attenuation, ray *r_out);

@@ -2,6 +2,7 @@
 
 #include <math.h>
 
+#include "../allocator.h"
 #include "../bounding_box.h"
 #include "../hit.h"
 #include "../material.h"
@@ -10,7 +11,7 @@
 #include "../util.h"
 #include "../vector.h"
 
-object rotate_y_create(object *inner, float angle) {
+object *rotate_y_create(object *inner, float angle) {
   rotate_y rotate_y_data;
   rotate_y_data.inner = inner;
   rotate_y_data.sin_theta = sin(angle * M_PI / 180.0);
@@ -48,8 +49,11 @@ object rotate_y_create(object *inner, float angle) {
 
   rotate_y_data.box = bounding_box_create(min, max);
 
-  return (object){.id = object_rotate_y,
-                  .data = (object_data){.rotate_y = rotate_y_data}};
+  object *new_object = (object *)allocate(sizeof(object));
+
+  *new_object = (object){.id = object_rotate_y,
+                         .data = (object_data){.rotate_y = rotate_y_data}};
+  return new_object;
 }
 
 bool rotate_y_hit(rotate_y *ry, ray *r, float t_min, float t_max, hit *record) {

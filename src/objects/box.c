@@ -1,5 +1,6 @@
 #include "box.h"
 
+#include "../allocator.h"
 #include "../bounding_box.h"
 #include "../hit.h"
 #include "../material.h"
@@ -8,8 +9,9 @@
 #include "../vector.h"
 #include "rectangle.h"
 
-object box_create(vector min, vector max, material *mat) {
-  return (object){
+object *box_create(vector min, vector max, material *mat) {
+  object *new_object = (object *)allocate(sizeof(object));
+  *new_object = (object){
       .id = object_box,
       .data = (object_data){
           .box = (box){
@@ -27,6 +29,7 @@ object box_create(vector min, vector max, material *mat) {
               .top =
                   (zx_rectangle){min.z, max.z, min.x, max.x, max.y, mat}, // top
               .mat = mat}}};
+  return new_object;
 }
 
 bool box_hit(box *b, ray *r, float t_min, float t_max, hit *record) {

@@ -13,6 +13,6 @@ typedef struct diffuse {
   texture *albedo;
 } diffuse;
 
-material diffuse_create(texture *albedo);
+material *diffuse_create(texture *albedo);
 bool diffuse_scatter(diffuse *mat, ray *r_in, hit *record, vector *attenuation,
                      ray *r_out);

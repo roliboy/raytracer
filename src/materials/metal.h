@@ -13,6 +13,6 @@ typedef struct metal {
   float fuzz;
 } metal;
 
-material metal_create(vector albedo, float fuzz);
+material *metal_create(vector albedo, float fuzz);
 bool metal_scatter(metal *mat, ray *r_in, hit *record, vector *attenuation,
                    ray *r_out);

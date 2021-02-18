@@ -1,11 +1,15 @@
 #include "invert_texture.h"
 
+#include "../allocator.h"
 #include "../texture.h"
 
-texture invert_texture_create(texture *inner) {
-  return (texture){.id = texture_invert_texture,
-                   .data = (texture_data){
-                       .invert_texture = (invert_texture){.inner = inner}}};
+texture *invert_texture_create(texture *inner) {
+  texture *new_texture = (texture *)allocate(sizeof(texture));
+  *new_texture =
+      (texture){.id = texture_invert_texture,
+                .data = (texture_data){.invert_texture =
+                                           (invert_texture){.inner = inner}}};
+  return new_texture;
 }
 
 vector invert_texture_value(invert_texture *tex, float u, float v, vector p) {
