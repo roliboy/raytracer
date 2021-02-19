@@ -50,7 +50,7 @@ int window_thread(void *_window) {
         SDL_DestroyRenderer(ren);
         SDL_DestroyWindow(win);
         SDL_Quit();
-        return 0;
+        exit(0);
       }
     }
 

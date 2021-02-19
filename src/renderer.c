@@ -84,9 +84,7 @@ int renderer_thread(void *_renderer) {
       vector rgb = vector_rgb(pixel_color, this->scene->samples_per_pixel);
       framebuffer_set(this->framebuffer, x, this->scene->height - 1 - y, rgb);
     }
-    // TODO: use malloc and free instead of global allocator because
-    // multithreading
-    deallocate(batch);
+    free(batch);
   }
 
   return 0;
@@ -116,7 +114,7 @@ bool _renderer_getbatch(renderer *ren, int **batch) {
 
   int blocksize = ren->framebuffer->width * ren->framebuffer->height / segments;
 
-  *batch = (int *)allocate(sizeof(int) * (blocksize + 1));
+  *batch = (int *)malloc(sizeof(int) * (blocksize + 1));
   for (int i = 0; i < blocksize; i++) {
     (*batch)[blocksize - 1 - i] = (segments - index - 1) * blocksize + i;
   }
@@ -161,7 +159,7 @@ bool renderer_getbatch(renderer *renderer, int **batch) {
   } else {
     // printf("assigned blocks %d %d\n", xindex, yindex);
 
-    *batch = (int *)allocate(sizeof(int) * (xblocksize * yblocksize + 1));
+    *batch = (int *)malloc(sizeof(int) * (xblocksize * yblocksize + 1));
     int i = 0;
     for (int y = yblocksize - 1; y >= 0; y--) {
       for (int x = 0; x < xblocksize; x++) {
