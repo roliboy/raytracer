@@ -1,27 +1,11 @@
 #!/usr/bin/env python
 
 from random import random, uniform
-
-size = lambda width, height: print(f'{int(width)} {int(height)}')
-ray = lambda samples, bounces: print(f'{samples} {bounces}')
-camera = lambda x, y, z: print(f'{x} {y} {z}')
-scene = lambda x, y, z: print(f'{x} {y} {z}')
-up = lambda x, y, z: print(f'{x} {y} {z}')
-settings = lambda fov, aperture, focus, shutter_open, shutter_close: print(f'{fov} {aperture} {focus} {shutter_open} {shutter_close}')
-ambient = lambda r, g, b: print(f'{r} {g} {b}')
-
-solid_color = lambda r, g, b: print(f'solid_color {r} {g} {b}')
-
-diffuse = lambda ti: print(f'diffuse {ti}')
-diffuse_light = lambda ti: print(f'diffuse_light {ti}')
-dielectric = lambda ir: print(f'dielectric {ir}')
-
-sphere = lambda x, y, z, d, mi: print(f'sphere {x} {y} {z} {d} {mi}')
-box = lambda x0, y0, z0, x1, y1, z1, mi: print(f'box {x0} {y0} {z0} {x1} {y1} {z1} {mi}')
-
+# import scenekit
+from scenekit import *
 # makeobject = lambda obj, mat: print(obj + " " + mat)
 
-size(1920/5, 1080/5)
+size(1920/10, 1080/10)
 ray(32, 128)
 camera(478, 278, -600)
 scene(278, 278, 0)
@@ -31,32 +15,25 @@ ambient(0.7, 0.8, 1)
 
 
 solid_color(0.48, 0.83, 0.53)
-# solid_color(7, 7, 7)
-# solid_color(0.7, 0.3, 0.1)
+solid_color(7, 7, 7)
+solid_color(0.7, 0.3, 0.1)
+solid_color(0.2, 0.4, 0.9)
+solid_color(1, 1, 1)
+image("images/earth.ppm")
+noise(4)
+solid_color(0.73, 0.73, 0.73)
 
 diffuse(0)
-# diffuse_light(1)
-# diffuse(2)
+diffuse_light(1)
+diffuse(2)
+diffuse(3)
+diffuse(4)
 dielectric(1.5)
-# metal(4)
+metal(0.8, 0.8, 0.9, 1.0)
+diffuse(5)
+diffuse(6)
 
 
-# //   textures[0] = solid_color_create(vector_create(0.48, 0.83, 0.53));
-# //   textures[1] = solid_color_create(vector_create(7, 7, 7));
-# //   textures[2] = solid_color_create(vector_create(0.7, 0.3, 0.1));
-# //   textures[5] = solid_color_create(vector_create(0.2, 0.4, 0.9));
-# //   textures[6] = solid_color_create(vector_create(1, 1, 1));
-# //   textures[7] = image_texture_create("images/earth.ppm");
-# //   textures[8] = noise_texture_create(4);
-# //   textures[9] = solid_color_create(vector_create(0.73, 0.73, 0.73));
-# //   materials[0] = diffuse_create(&textures[0]);
-# //   materials[1] = diffuse_light_create(&textures[1]);
-# //   materials[2] = diffuse_create(&textures[2]);
-# //   materials[3] = dielectric_create(1.5);
-# //   materials[4] = metal_create(vector_create(0.8, 0.8, 0.9), 1.0);
-# //   materials[5] = diffuse_light_create(&textures[7]);
-# //   materials[6] = diffuse_create(&textures[8]);
-# //   materials[7] = diffuse_create(&textures[9]);
 for i in range(0, 20):
     for j in range(0, 20):
         w = 100.0
@@ -69,23 +46,18 @@ for i in range(0, 20):
 
         box(x0, y0, z0, x1, y1, z1, 0)
 
-sphere(260, 150, 45, 50, 1)
-sphere(0, 150, 145, 50, 1)
-sphere(360, 150, 145, 70, 1)
-
-# //   objects[c++] = zx_rectangle_create(123, 423, 147, 412, 554, &materials[1]);
-# //   objects[c++] = moving_sphere_create(vector_create(400, 400, 200),
-# //                                       vector_create(430, 400, 200), 0, 1, 50,
-# //                                       &materials[2]);
-
-# objects[c++] = sphere_create(vector_create(260, 150, 45), 50, &materials[3]);
-#   objects[c++] = sphere_create(vector_create(0, 150, 145), 50, &materials[4]);
-#   objects[c++] = sphere_create(vector_create(360, 150, 145), 70, &materials[3]);
+zx_rectangle(123, 423, 147, 412, 554, 1)
+moving_sphere(400, 400, 200, 430, 400, 200, 0, 1, 50, 2)
+sphere(260, 150, 45, 50, 3)
+sphere(0, 150, 145, 50, 4)
+sphere(360, 150, 145, 70, 3)
 
 # //   object *b1 = (object *)allocate(sizeof(object));
 # //   *b1 = sphere_create(vector_create(360, 150, 145), 70, 0);
 # //   object *b2 = (object *)allocate(sizeof(object));
 # //   *b2 = sphere_create(vector_create(0, 0, 0), 5000, 0);
+
+# constant_medium(0.2, )
 
 # //   objects[c++] = constant_medium_create(b1, 0.2, &textures[5]);
 # //   objects[c++] = constant_medium_create(b2, 0.0001, &textures[6]);

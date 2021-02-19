@@ -23,17 +23,16 @@ window *window_create(int window_width, int window_height,
 
 void window_wait(window *window) { SDL_WaitThread(window->worker, NULL); }
 
-// TODO: refactor
-int window_thread(void *_window) {
-  window *this = (window *)_window;
+int window_thread(void *win) {
+  window *this = (window *)win;
 
   SDL_Init(SDL_INIT_VIDEO);
 
-  SDL_Window *win = SDL_CreateWindow(
+  SDL_Window *window = SDL_CreateWindow(
       "i regret my life choices v0.3 reloaded", SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED, this->width, this->height, SDL_WINDOW_SHOWN);
   SDL_Renderer *ren =
-      SDL_CreateRenderer(win, -1,
+      SDL_CreateRenderer(window, -1,
                          SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC |
                              SDL_RENDERER_TARGETTEXTURE);
 
@@ -48,7 +47,7 @@ int window_thread(void *_window) {
       case SDL_QUIT:
         SDL_DestroyTexture(offscreen_buffer);
         SDL_DestroyRenderer(ren);
-        SDL_DestroyWindow(win);
+        SDL_DestroyWindow(window);
         SDL_Quit();
         exit(0);
       }

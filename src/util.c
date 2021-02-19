@@ -26,7 +26,6 @@ float reflectance(float cosine, float ref_idx) {
   return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
-// TODO: leak
 unsigned char *load_ppm(char *filename, unsigned int *width,
                         unsigned int *height) {
   FILE *fp;
@@ -37,7 +36,7 @@ unsigned char *load_ppm(char *filename, unsigned int *width,
 
   fscanf(fp, "%*s\n");
   fscanf(fp, "%u %u\n", width, height);
-  printf("w: %d\nh: %d\n", *width, *height);
+  // printf("w: %d\nh: %d\n", *width, *height);
 
   fscanf(fp, "%*d");
 

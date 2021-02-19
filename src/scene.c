@@ -12,9 +12,14 @@
 #include "materials/dielectric.h"
 #include "materials/diffuse.h"
 #include "materials/diffuse_light.h"
+#include "materials/metal.h"
 #include "object.h"
 #include "objects/box.h"
+#include "objects/moving_sphere.h"
+#include "objects/rectangle.h"
 #include "texture.h"
+#include "textures/image_texture.h"
+#include "textures/noise_texture.h"
 #include "textures/solid_color.h"
 #include "vector.h"
 
@@ -55,13 +60,25 @@ scene *scene_create(char *filename) {
       fscanf(fp, "%f %f %f", &r, &g, &b);
       textures[tc++] = solid_color_create(vector_create(r, g, b));
     } else if (!strcmp(object_type, "image")) {
-
+      char path[128];
+      fscanf(fp, "%s", path);
+      textures[tc++] = image_texture_create(path);
+    } else if (!strcmp(object_type, "noise")) {
+      float scale;
+      fscanf(fp, "%f", &scale);
+      textures[tc++] = noise_texture_create(scale);
     } else if (!strcmp(object_type, "diffuse")) {
       int ti;
       fscanf(fp, "%d", &ti);
       materials[mc++] = diffuse_create(textures[ti]);
+    } else if (!strcmp(object_type, "diffuse_light")) {
+      int ti;
+      fscanf(fp, "%d", &ti);
+      materials[mc++] = diffuse_light_create(textures[ti]);
     } else if (!strcmp(object_type, "metal")) {
-
+      float r, g, b, f;
+      fscanf(fp, "%f %f %f %f", &r, &g, &b, &f);
+      materials[mc++] = metal_create(vector_create(r, g, b), f);
     } else if (!strcmp(object_type, "dielectric")) {
       float ir;
       fscanf(fp, "%f", &ir);
@@ -77,6 +94,19 @@ scene *scene_create(char *filename) {
       fscanf(fp, "%f %f %f %f %f %f %d", &x0, &y0, &z0, &x1, &y1, &z1, &mi);
       objects[oc++] = box_create(vector_create(x0, y0, z0),
                                  vector_create(x1, y1, z1), materials[mi]);
+    } else if (!strcmp(object_type, "zx_rectangle")) {
+      float z0, z1, x0, x1, k;
+      int mi;
+      fscanf(fp, "%f %f %f %f %f %d", &z0, &z1, &x0, &x1, &k, &mi);
+      objects[oc++] = zx_rectangle_create(z0, z1, x0, x1, k, materials[mi]);
+    } else if (!strcmp(object_type, "moving_sphere")) {
+      float x0, y0, z0, x1, y1, z1, t0, t1, r;
+      int mi;
+      fscanf(fp, "%f %f %f %f %f %f %f %f %f %d", &x0, &y0, &z0, &x1, &y1, &z1,
+             &t0, &t1, &r, &mi);
+      objects[oc++] = moving_sphere_create(vector_create(x0, y0, z0),
+                                           vector_create(x1, y1, z1), t0, t1, r,
+                                           materials[mi]);
     }
   }
 
