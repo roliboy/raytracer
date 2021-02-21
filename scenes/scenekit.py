@@ -44,7 +44,7 @@ class scene:
     def addobject(self, object, material):
         self.objects.append(f'{object} {material}')
     def print(self):
-        print(f'{int(self.width)}, {int(self.height)}')
+        print(f'{int(self.width)} {int(self.height)}')
         print(f'{int(self.samples_per_pixel)} {int(self.max_ray_bounces)}')
         print(f'{self.lookfrom_x} {self.lookfrom_y} {self.lookfrom_z}')
         print(f'{self.lookat_x} {self.lookat_y} {self.lookat_z}')
@@ -59,35 +59,31 @@ class scene:
             print(object)
         
 
-solid_color = lambda r, g, b: f'solid_color {r} {g} {b}'
-#image = lambda path: f'image {path}'
-#noise = lambda scale: f'noise {scale}'
-#
-diffuse = lambda ti: f'diffuse {ti}'
-#diffuse_light = lambda ti: f'diffuse_light {ti}'
-#dielectric = lambda ir: f'dielectric {ir}'
-#metal = lambda r, g, b, f: f'metal {r} {g} {b} {f}'
-#
-sphere = lambda x, y, z, d: f'sphere {x} {y} {z} {d}'
-box = lambda x0, y0, z0, x1, y1, z1: f'box {x0} {y0} {z0} {x1} {y1} {z1}'
-#zx_rectangle = lambda z0, z1, x0, x1, k: f'zx_rectangle {z0} {z1} {x0} {x1} {k}'
-#moving_sphere = lambda x0, y0, z0, x1, y1, z1, t0, t1, r: f'moving_sphere {x0} {y0} {z0} {x1} {y1} {z1} {t0} {t1} {r}'
-
 scn = scene()
-scn.resolution(1920/10, 1080/10)
-scn.detail(32, 32)
-scn.lookfrom(1, 2, 3)
-scn.lookat(2, 3, 4)
-scn.up(0, 1, 0)
-scn.camera(40, 0.1, 10, 0, 1)
-scn.ambient(0, 0, 0)
-scn.addobject(sphere(1, 2, 3, 4), scn.addmaterial(diffuse(scn.addtexture(solid_color(1, 2, 3)))))
-scn.addobject(box(1, 2, 3, 4, 5, 6), scn.addmaterial(diffuse(scn.addtexture(solid_color(1, 3, 3)))))
-scn.print()
 
-# makeobject(sphere(1, 2, 3, 4), makematerial(diffuse(maketexture(solid_color(1, 2, 3)))))
-# makeobject(sphere(1, 2, 3, 4), makematerial(dielectric(1.5)))
-# makeobject(sphere(1, 2, 3, 4), makematerial(diffuse(maketexture(solid_color(1, 3, 3)))))
-# makeobject(sphere(1, 2, 3, 4), makematerial(diffuse(maketexture(solid_color(1, 2, 3)))))
-# makeobject(sphere(1, 2, 3, 4), makematerial(diffuse(maketexture(solid_color(0, 3, 3)))))
+resolution = lambda width, height: scn.resolution(width, height)
+detail = lambda samples, bounces: scn.detail(samples, bounces)
+lookfrom = lambda x, y, z: scn.lookfrom(x, y, z)
+lookat = lambda x, y, z: scn.lookat(x, y, z)
+up = lambda x, y, z: scn.up(x, y, z)
+camera = lambda fov, aperture, focal_length, shutter_open, shutter_close: scn.camera(fov, aperture, focal_length, shutter_open, shutter_close)
+ambient = lambda r, g, b: scn.ambient(r, g, b)
 
+solid_color = lambda r, g, b: scn.addtexture(f'solid_color {r} {g} {b}')
+image = lambda path: scn.addtexture(f'image {path}')
+noise = lambda scale: scn.addtexture(f'noise {scale}')
+
+diffuse = lambda tex: scn.addmaterial(f'diffuse {tex}')
+dielectric = lambda ir: scn.addmaterial(f'dielectric {ir}')
+metal = lambda r, g, b, f: scn.addmaterial(f'metal {r} {g} {b} {f}')
+diffuse_light = lambda tex: scn.addmaterial(f'diffuse_light {tex}')
+isotropic = lambda albedo: scn.addmaterial(f'isotropic {albedo}')
+
+sphere = lambda x, y, z, r, mat: scn.addobject(f'sphere {x} {y} {z} {r}', mat)
+box = lambda x0, y0, z0, x1, y1, z1, mat: scn.addobject(f'box {x0} {y0} {z0} {x1} {y1} {z1}', mat)
+zx_rectangle = lambda z0, z1, x0, x1, k, mat: scn.addobject(f'zx_rectangle {z0} {z1} {x0} {x1} {k}', mat)
+moving_sphere = lambda x0, y0, z0, x1, y1, z1, t0, t1, r, mat: scn.addobject(f'moving_sphere {x0} {y0} {z0} {x1} {y1} {z1} {t0} {t1} {r}', mat)
+#currently sphere boundary only
+constant_medium = lambda x, y, z, r, density, phase: scn.addobject(f'constant_medium {x} {y} {z} {r} {density}', phase)
+
+printscene = lambda: scn.print()

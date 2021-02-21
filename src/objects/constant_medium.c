@@ -13,16 +13,16 @@
 #include "../vector.h"
 
 object *constant_medium_create(object *boundary, float density,
-                               texture *phase) {
+                               material *phase) {
   // material *phase_function = (material *)allocate(sizeof(material));
-  material *phase_function = isotropic_create(phase);
+  //material *phase_function = isotropic_create(phase);
   object *new_object = (object *)allocate(sizeof(object));
   *new_object =
       (object){.id = object_constant_medium,
                .data = (object_data){.constant_medium = (constant_medium){
                                          .boundary = boundary,
                                          .neg_inv_density = -1 / density,
-                                         .phase_function = phase_function}}};
+                                         .phase_function = phase}}};
   return new_object;
 }
 

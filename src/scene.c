@@ -83,6 +83,10 @@ scene *scene_create(char *filename) {
       float ir;
       fscanf(fp, "%f", &ir);
       materials[mc++] = dielectric_create(ir);
+    } else if (!strcmp(object_type, "isotropic")) {
+      int ti;
+      fscanf(fp, "%d", &ti);
+      materials[mc++] = isotropic_create(textures[ti]);
     } else if (!strcmp(object_type, "sphere")) {
       float x, y, z, r;
       int mi;
@@ -107,6 +111,12 @@ scene *scene_create(char *filename) {
       objects[oc++] = moving_sphere_create(vector_create(x0, y0, z0),
                                            vector_create(x1, y1, z1), t0, t1, r,
                                            materials[mi]);
+    } else if (!strcmp(object_type, "constant_medium")) {
+      float x, y, z, r, d;
+      int mi;
+      fscanf(fp, "%f %f %f %f %f %d", &x, &y, &z, &r, &d, &mi);
+      object *boundary = sphere_create(vector_create(x, y, z), r, NULL);
+      objects[oc++] = constant_medium_create(boundary, d, materials[mi]);
     }
   }
 

@@ -6,6 +6,7 @@
 
 // TODO: stop renderer threads when window is closed
 // TODO: partial renders
+// TODO: arbitrary textures for metallic material
 
 int main(int argc, char **argv) {
   if (argc != 2) {
