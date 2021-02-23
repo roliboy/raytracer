@@ -91,10 +91,10 @@ int renderer_thread(void *_renderer) {
 }
 
 // TODO: this
-#define segments 16
+#define segments 128
 bool assined[segments] = {false};
 
-bool _renderer_getbatch(renderer *ren, int **batch) {
+bool renderer_getbatch(renderer *ren, int **batch) {
   SDL_LockMutex(ren->mutex);
 
   int index = -1;
@@ -128,7 +128,7 @@ bool _renderer_getbatch(renderer *ren, int **batch) {
 #define yfragments 12
 int xindex = -1;
 int yindex = yfragments - 1;
-bool renderer_getbatch(renderer *renderer, int **batch) {
+bool _renderer_getbatch(renderer *renderer, int **batch) {
   int xblocksize = renderer->framebuffer->width / xfragments;
   int yblocksize = renderer->framebuffer->height / yfragments;
   bool done = false;
