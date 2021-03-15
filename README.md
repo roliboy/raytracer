@@ -1,11 +1,15 @@
 # raytracer
 
-ray tracer i ~~stole~~ implemented following [this pdf](https://www.realtimerendering.com/raytracing/Ray%20Tracing%20in%20a%20Weekend.pdf)
+ray tracer implemented in pure C following [this book](https://www.realtimerendering.com/raytracing/Ray%20Tracing%20in%20a%20Weekend.pdf)
 
-![sample text](images/balls.png)
-![sample text](images/squares.png)
+### diffuse, metal and dielectric materials
+![sample text](images/book1.png)
 
-see the image at the end of [the second book](https://www.realtimerendering.com/raytracing/Ray%20Tracing_%20The%20Next%20Week.pdf) for how it should have looked in higher resolution
+### light emmision
+![sample text](images/book1-lights.png)
+
+### motion blur, subsurface scattering, constant medium and textures
+![sample text](images/book2.png)
 
 
 ### some extra features i added
@@ -13,7 +17,3 @@ see the image at the end of [the second book](https://www.realtimerendering.com/
 - multithreaded rendering
 - scene loading from files
 - AVX256 intrinsics
-
-### Q&A
-Q: Is it realtime?
-The time is real. if you run it on a decent processor it might finish rendering before the heat death of the universe
